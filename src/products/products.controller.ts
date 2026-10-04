@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, NotFoundException, Put, Delete } from "@nestjs/common";
+import { CreateProductDto } from "./DTOs/create-product.dto.js";
+import { UpdateProductDto } from "./DTOs/update-product.dto.js";
 
 type Product = {
     id: number;
@@ -7,7 +9,7 @@ type Product = {
 }
 
 // handle req , res 
-@Controller()
+@Controller("products")
 export class ProductsController {
     private products: Product[] = [
         {
@@ -22,8 +24,8 @@ export class ProductsController {
         },
     ]
 
-    @Post("products")
-    createProduct(@Body() body: { name: string, price: number }) {
+    @Post()
+    createProduct(@Body() body: CreateProductDto) {
         const newProduct: Product = {
             id: this.products.length + 1,
             name: body.name,
@@ -33,13 +35,40 @@ export class ProductsController {
         return newProduct
     }
 
-    @Get("products/:id")
-    getProductById(@Param("id") id: string) {
-        return this.products.find(product => product.id === Number(id))
-    }
-
-    @Get("products")
+    @Get()
     getAllProducts() {
         return this.products
+    }
+
+    @Get(":id")
+    getProductById(@Param("id") id: string) {
+        const product = this.products.find(product => product.id === Number(id))
+        if(!product){
+            throw new NotFoundException("Product not found")
+        }
+        return product
+    }
+
+    @Put(":id")
+    updateProduct(@Param("id") id: string, @Body() body: UpdateProductDto) {
+        const product = this.products.find(product => product.id === Number(id))
+        if(!product){
+            throw new NotFoundException("Product not found")
+        }
+        product.name = body.name || product.name
+        product.price = body.price || product.price
+        return product
+    }
+
+    @Delete(":id")
+    deleteProduct(@Param("id") id: string) {
+        const product = this.products.find(product => product.id === Number(id))
+        if(!product){
+            throw new NotFoundException("Product not found")
+        }
+        this.products = this.products.filter(product => product.id !== Number(id))
+        return {
+            message: "Product deleted successfully",
+        }
     }
 }
