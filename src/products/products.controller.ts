@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, NotFoundException, Put, Delete } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, NotFoundException, Put, Delete, ParseIntPipe } from "@nestjs/common";
 import { CreateProductDto } from "./DTOs/create-product.dto.js";
 import { UpdateProductDto } from "./DTOs/update-product.dto.js";
 
@@ -41,18 +41,21 @@ export class ProductsController {
     }
 
     @Get(":id")
-    getProductById(@Param("id") id: string) {
-        const product = this.products.find(product => product.id === Number(id))
-        if(!product){
+    getProductById(@Param("id", ParseIntPipe) id: number) {
+        const product = this.products.find(product => product.id === id)
+        if (!product) {
             throw new NotFoundException("Product not found")
         }
         return product
     }
 
     @Put(":id")
-    updateProduct(@Param("id") id: string, @Body() body: UpdateProductDto) {
-        const product = this.products.find(product => product.id === Number(id))
-        if(!product){
+    updateProduct(
+        @Param("id", ParseIntPipe) id: number,
+        @Body() body: UpdateProductDto
+    ) {
+        const product = this.products.find(product => product.id === id)
+        if (!product) {
             throw new NotFoundException("Product not found")
         }
         product.name = body.name || product.name
@@ -61,12 +64,12 @@ export class ProductsController {
     }
 
     @Delete(":id")
-    deleteProduct(@Param("id") id: string) {
-        const product = this.products.find(product => product.id === Number(id))
+    deleteProduct(@Param("id", ParseIntPipe) id: number) {
+        const product = this.products.find(product => product.id === id)
         if(!product){
             throw new NotFoundException("Product not found")
         }
-        this.products = this.products.filter(product => product.id !== Number(id))
+        this.products = this.products.filter(product => product.id !== id)
         return {
             message: "Product deleted successfully",
         }
