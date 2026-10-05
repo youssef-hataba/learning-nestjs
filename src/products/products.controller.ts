@@ -1,52 +1,26 @@
-import { Body, Controller, Get, Param, Post, NotFoundException, Put, Delete, ParseIntPipe } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Delete, ParseIntPipe } from "@nestjs/common";
 import { CreateProductDto } from "./DTOs/create-product.dto.js";
 import { UpdateProductDto } from "./DTOs/update-product.dto.js";
-
-type Product = {
-    id: number;
-    name: string;
-    price: number;
-}
+import { ProductsService } from "./products.service.js";
 
 // handle req , res 
 @Controller("products")
 export class ProductsController {
-    private products: Product[] = [
-        {
-            id: 1,
-            name: "Product 1",
-            price: 100,
-        },
-        {
-            id: 2,
-            name: "Product 2",
-            price: 200,
-        },
-    ]
+    constructor(private readonly productsService: ProductsService) {}
 
     @Post()
     createProduct(@Body() body: CreateProductDto) {
-        const newProduct: Product = {
-            id: this.products.length + 1,
-            name: body.name,
-            price: body.price,
-        }
-        this.products.push(newProduct)
-        return newProduct
+        return this.productsService.createProduct(body);
     }
 
     @Get()
     getAllProducts() {
-        return this.products
+        return this.productsService.getAllProducts();
     }
 
     @Get(":id")
     getProductById(@Param("id", ParseIntPipe) id: number) {
-        const product = this.products.find(product => product.id === id)
-        if (!product) {
-            throw new NotFoundException("Product not found")
-        }
-        return product
+        return this.productsService.getProductById(id);
     }
 
     @Put(":id")
@@ -54,24 +28,11 @@ export class ProductsController {
         @Param("id", ParseIntPipe) id: number,
         @Body() body: UpdateProductDto
     ) {
-        const product = this.products.find(product => product.id === id)
-        if (!product) {
-            throw new NotFoundException("Product not found")
-        }
-        product.name = body.name || product.name
-        product.price = body.price || product.price
-        return product
+        return this.productsService.updateProduct(id, body);
     }
 
     @Delete(":id")
     deleteProduct(@Param("id", ParseIntPipe) id: number) {
-        const product = this.products.find(product => product.id === id)
-        if(!product){
-            throw new NotFoundException("Product not found")
-        }
-        this.products = this.products.filter(product => product.id !== id)
-        return {
-            message: "Product deleted successfully",
-        }
+        return this.productsService.deleteProduct(id);
     }
 }
