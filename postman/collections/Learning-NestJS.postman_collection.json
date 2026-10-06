@@ -1,0 +1,482 @@
+{
+	"info": {
+		"_postman_id": "a9840d21-f09c-4b52-9dae-884849204cb3",
+		"name": "🚀 Learning NestJS API",
+		"description": "# 🚀 Learning NestJS API Collection\n\nComprehensive API documentation and test suite for the **Learning NestJS** backend with **PostgreSQL** and **TypeORM**.\n\n---\n\n### ⚙️ Variables\n* `baseUrl`: `http://localhost:3000/api`\n\n### 📂 Modules\n1. **📦 Products:** Full CRUD connected to PostgreSQL via TypeORM.\n2. **👥 Users:** User management endpoints.\n3. **⭐ Reviews:** Product review endpoints.\n4. **🌐 System:** App health & welcome endpoint.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "📦 Products",
+			"description": "Endpoints for managing products stored in PostgreSQL database via TypeORM.",
+			"item": [
+				{
+					"name": "📦 Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						},
+						"description": "### 📦 Get All Products\nFetches a list of all products from the PostgreSQL database along with matching reviews.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/products`\n* **Success Response:** `200 OK`"
+					},
+					"response": []
+				},
+				{
+					"name": "🔍 Get Product By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Product ID (Numeric)"
+								}
+							]
+						},
+						"description": "### 🔍 Get Product By ID\nFetches a single product by its unique integer identifier.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/products/:id`\n* **Throws:** `404 Not Found` if product does not exist."
+					},
+					"response": []
+				},
+				{
+					"name": "✨ Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Gaming Keyboard RGB\",\n  \"description\": \"Mechanical gaming keyboard with high-precision blue switches and RGB illumination.\",\n  \"price\": 120\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						},
+						"description": "### ✨ Create Product\nCreates a new product record in PostgreSQL.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/products`\n* **Body Validation:**\n  * `title`: String (3 - 30 chars, required)\n  * `description`: String (5 - 500 chars, required)\n  * `price`: Number (>= 0, required)"
+					},
+					"response": []
+				},
+				{
+					"name": "✏️ Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Gaming Keyboard RGB Pro\",\n  \"description\": \"Upgraded mechanical gaming keyboard with silent tactile switches.\",\n  \"price\": 145\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Product ID to update"
+								}
+							]
+						},
+						"description": "### ✏️ Update Product\nUpdates an existing product in the database.\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/products/:id`\n* **Body:** All fields are optional (`title`, `description`, `price`)."
+					},
+					"response": []
+				},
+				{
+					"name": "🗑️ Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Product ID to remove"
+								}
+							]
+						},
+						"description": "### 🗑️ Delete Product\nPermanently removes a product from PostgreSQL.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/products/:id`\n* **Success Response:** `{\"message\": \"Product deleted successfully\"}`"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "👥 Users",
+			"description": "Endpoints for managing application users.",
+			"item": [
+				{
+					"name": "👥 Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "### 👥 Get All Users\nRetrieves a list of all registered users.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users`"
+					},
+					"response": []
+				},
+				{
+					"name": "👤 Get User By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "User ID (Numeric)"
+								}
+							]
+						},
+						"description": "### 👤 Get User By ID\nRetrieves profile details for a specific user.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users/:id`"
+					},
+					"response": []
+				},
+				{
+					"name": "✨ Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Youssef Hataba\",\n  \"email\": \"youssef@example.com\",\n  \"age\": 24\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "### ✨ Create User\nRegisters a new user.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/users`\n* **Body Validation:**\n  * `name`: String (3 - 30 chars, required)\n  * `email`: Valid email format (required)\n  * `age`: Number (>= 1, optional)"
+					},
+					"response": []
+				},
+				{
+					"name": "✏️ Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Youssef H.\",\n  \"age\": 25\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "User ID to update"
+								}
+							]
+						},
+						"description": "### ✏️ Update User\nUpdates user information.\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/users/:id`"
+					},
+					"response": []
+				},
+				{
+					"name": "🗑️ Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "User ID to delete"
+								}
+							]
+						},
+						"description": "### 🗑️ Delete User\nDeletes a user account.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/users/:id`"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "⭐ Reviews",
+			"description": "Endpoints for product ratings and feedback reviews.",
+			"item": [
+				{
+					"name": "⭐ Get All Reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reviews",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews"
+							]
+						},
+						"description": "### ⭐ Get All Reviews\nFetches all customer reviews across the platform.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/reviews`"
+					},
+					"response": []
+				},
+				{
+					"name": "🔎 Get Review By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reviews/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Review ID (Numeric)"
+								}
+							]
+						},
+						"description": "### 🔎 Get Review By ID\nFetches a specific review by ID.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/reviews/:id`"
+					},
+					"response": []
+				},
+				{
+					"name": "✍️ Create Review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Exceptional quality, super fast delivery! Highly recommended.\",\n  \"rating\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reviews",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews"
+							]
+						},
+						"description": "### ✍️ Create Review\nAdds a new customer review.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/reviews`\n* **Body Validation:**\n  * `text`: String (3 - 200 chars, required)\n  * `rating`: Number (1 to 5, required)"
+					},
+					"response": []
+				},
+				{
+					"name": "📝 Update Review",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Updated review: used it for a month, still performs great!\",\n  \"rating\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reviews/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Review ID to update"
+								}
+							]
+						},
+						"description": "### 📝 Update Review\nModifies review content or rating.\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/reviews/:id`"
+					},
+					"response": []
+				},
+				{
+					"name": "🗑️ Delete Review",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/reviews/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Review ID to delete"
+								}
+							]
+						},
+						"description": "### 🗑️ Delete Review\nRemoves a review from the system.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/reviews/:id`"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🌐 System",
+			"description": "Root server health and welcome endpoints.",
+			"item": [
+				{
+					"name": "👋 Welcome / Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "### 👋 Root Welcome Endpoint\nBasic health check endpoint returning welcome greeting.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}`\n* **Response:** `🟢 Hello World! Welcome to the API.✈️💥🚀🔥`"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		}
+	]
+}

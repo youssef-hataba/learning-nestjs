@@ -3,11 +3,15 @@
     "id": "049a320f-cba3-4f0f-926e-cdd300dc19c1"
   },
   "entities": {
-    "environments": [],
+    "environments": [
+      "postman/environments/Local.postman_environment.json"
+    ],
     "flows": [],
     "globals": [],
     "mocks": [],
     "specs": [],
-    "collections": []
+    "collections": [
+      "postman/collections/Learning-NestJS.postman_collection.json"
+    ]
   }
 }
