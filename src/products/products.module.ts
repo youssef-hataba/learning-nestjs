@@ -8,4 +8,5 @@ import { ReviewsModule } from "../reviews/reviews.module.js";
     providers: [ProductsService],
     imports: [ReviewsModule],
 })
+
 export class ProductsModule { }
