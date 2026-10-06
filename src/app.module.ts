@@ -21,7 +21,7 @@ import { AppController } from "./app.controller.js";
                 password: configService.get<string>("DB_PASSWORD"),
                 database: configService.get<string>("DB_NAME"),
                 autoLoadEntities: true,
-                synchronize: process.env.NODE_ENV !== "production", // Only for development/learning
+                synchronize: configService.get<string>("NODE_ENV") !== "production", // Only for development/learning
             }),
         }),
         UsersModule,
