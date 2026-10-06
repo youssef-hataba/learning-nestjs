@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "./users/users.module.js";
 import { ProductsModule } from "./products/products.module.js";
@@ -7,15 +8,21 @@ import { AppController } from "./app.controller.js";
 
 @Module({
     imports: [
-        TypeOrmModule.forRoot({
-            type: "postgres",
-            host: process.env.DB_HOST || "localhost",
-            port: Number(process.env.DB_PORT) || 5432,
-            username: process.env.DB_USER || "postgres",
-            password: process.env.DB_PASSWORD || "postgres",
-            database: process.env.DB_NAME || "learning_nest",
-            autoLoadEntities: true,
-            synchronize: true, // Only for development/learning
+        ConfigModule.forRoot({
+            isGlobal: true,
+        }),
+        TypeOrmModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                type: "postgres",
+                host: configService.get<string>("DB_HOST"),
+                port: configService.get<number>("DB_PORT"),
+                username: configService.get<string>("DB_USER"),
+                password: configService.get<string>("DB_PASSWORD"),
+                database: configService.get<string>("DB_NAME"),
+                autoLoadEntities: true,
+                synchronize: process.env.NODE_ENV !== "production", // Only for development/learning
+            }),
         }),
         UsersModule,
         ProductsModule,
