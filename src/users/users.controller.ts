@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, ParseUUIDPipe } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Delete, ParseUUIDPipe, HttpCode, HttpStatus } from "@nestjs/common";
 import { UsersService } from "./users.service.js";
 import { CreateUserDto } from "./DTOs/create-user.dto.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
+import { RegisterDto } from "./DTOs/register.dto.js";
+import { LoginDto } from "./DTOs/login.dto.js";
 
-@Controller("users")
+@Controller("users/auth")
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
@@ -15,6 +17,17 @@ export class UsersController {
     @Get(":id")
     getUserById(@Param("id", ParseUUIDPipe) id: string) {
         return this.usersService.getUserById(id);
+    }
+
+    @Post("register")
+    register(@Body() body: RegisterDto) {
+        return this.usersService.register(body);
+    }
+
+    @Post("login")
+    @HttpCode(HttpStatus.OK)
+    login(@Body() body: LoginDto) {
+        return this.usersService.login(body);
     }
 
     @Post()
