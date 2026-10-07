@@ -1,17 +1,17 @@
-import { IsNotEmpty, IsString, IsEmail, IsNumber, IsOptional, Min, Length } from "class-validator";
+import { IsNotEmpty, IsString, IsEmail, Length } from "class-validator";
 
 export class CreateUserDto {
     @IsString()
-    @IsNotEmpty({ message: "Name is required" })
-    @Length(3, 30, { message: "Name must be between 3 and 30 characters long" })
-    name: string;
+    @IsNotEmpty({ message: "Username is required" })
+    @Length(3, 30, { message: "Username must be between 3 and 30 characters long" })
+    username: string;
 
     @IsEmail({}, { message: "Invalid email address" })
     @IsNotEmpty({ message: "Email is required" })
     email: string;
 
-    @IsOptional()
-    @IsNumber({}, { message: "Age must be a number" })
-    @Min(1, { message: "Age must be a positive number" })
-    age?: number;
+    @IsString()
+    @IsNotEmpty({ message: "Password is required" })
+    @Length(6, 50, { message: "Password must be at least 6 characters long" })
+    password: string;
 }

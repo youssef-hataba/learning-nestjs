@@ -1,17 +1,22 @@
-import { IsOptional, IsString, IsEmail, IsNumber, Min, Length } from "class-validator";
+import { IsOptional, IsString, IsEmail, IsEnum, Length } from "class-validator";
+import { UserType } from "../../utils/enums.js";
 
 export class UpdateUserDto {
     @IsOptional()
     @IsString()
-    @Length(3, 30, { message: "Name must be between 3 and 30 characters long" })
-    name?: string;
+    @Length(3, 30, { message: "Username must be between 3 and 30 characters long" })
+    username?: string;
 
     @IsOptional()
     @IsEmail({}, { message: "Invalid email address" })
     email?: string;
 
     @IsOptional()
-    @IsNumber({}, { message: "Age must be a number" })
-    @Min(1, { message: "Age must be a positive number" })
-    age?: number;
+    @IsString()
+    @Length(6, 50, { message: "Password must be at least 6 characters long" })
+    password?: string;
+
+    @IsOptional()
+    @IsEnum(UserType, { message: "userType must be either admin or user" })
+    userType?: UserType;
 }

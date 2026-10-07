@@ -1,71 +1,52 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 import { CreateUserDto } from "./DTOs/create-user.dto.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
-
-export type User = {
-    id: number;
-    name: string;
-    email: string;
-    age?: number;
-};
+import { User } from "./user.entity.js";
 
 @Injectable()
 export class UsersService {
-    private users: User[] = [
-        {
-            id: 1,
-            name: "Alice",
-            email: "alice@example.com",
-            age: 25,
-        },
-        {
-            id: 2,
-            name: "Bob",
-            email: "bob@example.com",
-            age: 30,
-        },
-    ];
+    constructor(
+        @InjectRepository(User)
+        private readonly usersRepository: Repository<User>,
+    ) {}
 
-    getAllUsers(): User[] {
-        return this.users;
+    async getAllUsers(): Promise<User[]> {
+        return await this.usersRepository.find({
+            relations: { products: true, reviews: true },
+        });
     }
 
-    getUserById(id: number): User {
-        const user = this.users.find(u => u.id === id);
+    async getUserById(id: number): Promise<User> {
+        const user = await this.usersRepository.findOne({
+            where: { id },
+            relations: { products: true, reviews: true },
+        });
         if (!user) {
             throw new NotFoundException("User not found");
         }
         return user;
     }
 
-    createUser(body: CreateUserDto): User {
-        const newUser: User = {
-            id: this.users.length + 1,
-            name: body.name,
-            email: body.email,
-            age: body.age,
-        };
-        this.users.push(newUser);
-        return newUser;
+    async createUser(body: CreateUserDto): Promise<User> {
+        const newUser = this.usersRepository.create(body);
+        const savedUser = await this.usersRepository.save(newUser);
+        return await this.getUserById(savedUser.id);
     }
 
-    updateUser(id: number, body: UpdateUserDto): User {
-        const user = this.users.find(u => u.id === id);
-        if (!user) {
-            throw new NotFoundException("User not found");
-        }
-        user.name = body.name ?? user.name;
+    async updateUser(id: number, body: UpdateUserDto): Promise<User> {
+        const user = await this.getUserById(id);
+        user.username = body.username ?? user.username;
         user.email = body.email ?? user.email;
-        user.age = body.age ?? user.age;
-        return user;
+        user.password = body.password ?? user.password;
+        await this.usersRepository.save(user);
+        return await this.getUserById(id);
     }
 
-    deleteUser(id: number) {
-        const user = this.users.find(u => u.id === id);
-        if (!user) {
-            throw new NotFoundException("User not found");
-        }
-        this.users = this.users.filter(u => u.id !== id);
+    async deleteUser(id: number): Promise<{ message: string }> {
+        const user = await this.getUserById(id);
+        await this.usersRepository.remove(user);
         return {
             message: "User deleted successfully",
         };

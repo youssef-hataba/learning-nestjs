@@ -1,66 +1,54 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 import { CreateReviewDto } from "./DTOs/create-review.dto.js";
 import { UpdateReviewDto } from "./DTOs/update-review.dto.js";
-
-export type Review = {
-    id: number;
-    text: string;
-    rating: number;
-};
+import { Review } from "./review.entity.js";
 
 @Injectable()
 export class ReviewsService {
-    private reviews: Review[] = [
-        {
-            id: 1,
-            text: "Review 1",
-            rating: 5,
-        },
-        {
-            id: 2,
-            text: "Review 2",
-            rating: 4,
-        },
-    ];
+    constructor(
+        @InjectRepository(Review)
+        private readonly reviewsRepository: Repository<Review>,
+    ) {}
 
-    getAllReviews(): Review[] {
-        return this.reviews;
+    async getAllReviews(): Promise<Review[]> {
+        return await this.reviewsRepository.find({
+            relations: { product: true, user: true },
+        });
     }
 
-    getReviewById(id: number): Review {
-        const review = this.reviews.find(r => r.id === id);
+    async getReviewById(id: number): Promise<Review> {
+        const review = await this.reviewsRepository.findOne({
+            where: { id },
+            relations: { product: true, user: true },
+        });
         if (!review) {
             throw new NotFoundException("Review not found");
         }
         return review;
     }
 
-    createReview(body: CreateReviewDto): Review {
-        const newReview: Review = {
-            id: this.reviews.length + 1,
-            text: body.text,
+    async createReview(body: CreateReviewDto): Promise<Review> {
+        const newReview = this.reviewsRepository.create({
             rating: body.rating,
-        };
-        this.reviews.push(newReview);
-        return newReview;
+            comment: body.comment,
+            product: body.productId ? ({ id: body.productId } as any) : undefined,
+            user: body.userId ? ({ id: body.userId } as any) : undefined,
+        });
+        return await this.reviewsRepository.save(newReview);
     }
 
-    updateReview(id: number, body: UpdateReviewDto): Review {
-        const review = this.reviews.find(r => r.id === id);
-        if (!review) {
-            throw new NotFoundException("Review not found");
-        }
-        review.text = body.text ?? review.text;
+    async updateReview(id: number, body: UpdateReviewDto): Promise<Review> {
+        const review = await this.getReviewById(id);
         review.rating = body.rating ?? review.rating;
-        return review;
+        review.comment = body.comment ?? review.comment;
+        return await this.reviewsRepository.save(review);
     }
 
-    deleteReview(id: number) {
-        const review = this.reviews.find(r => r.id === id);
-        if (!review) {
-            throw new NotFoundException("Review not found");
-        }
-        this.reviews = this.reviews.filter(r => r.id !== id);
+    async deleteReview(id: number): Promise<{ message: string }> {
+        const review = await this.getReviewById(id);
+        await this.reviewsRepository.remove(review);
         return {
             message: "Review deleted successfully",
         };

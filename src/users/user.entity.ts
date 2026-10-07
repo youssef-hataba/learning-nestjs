@@ -2,11 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import type { Relation } from "typeorm";
 import { Product } from "../products/product.entity.js";
 import { Review } from "../reviews/review.entity.js";
-
-export enum UserType {
-    ADMIN = "admin",
-    USER = "user",
-}
+import { UserType } from "../utils/enums.js";
 
 @Entity({
     name: "users",
@@ -21,13 +17,14 @@ export class User {
     @Column({ unique: true })
     email: string;
 
-    @Column()
+    @Column({ select: false })
     password: string;
 
     @Column({
         type: "enum",
         enum: UserType,
         default: UserType.USER,
+        select: false,
     })
     userType: UserType;
 

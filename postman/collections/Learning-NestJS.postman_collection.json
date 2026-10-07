@@ -214,7 +214,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Youssef Hataba\",\n  \"email\": \"youssef@example.com\",\n  \"age\": 24\n}",
+							"raw": "{\n  \"username\": \"youssef_dev\",\n  \"email\": \"youssef@example.com\",\n  \"password\": \"Secret@123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -362,7 +362,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"text\": \"Exceptional quality, super fast delivery! Highly recommended.\",\n  \"rating\": 5\n}",
+							"raw": "{\n  \"rating\": 5,\n  \"comment\": \"Exceptional quality, super fast delivery! Highly recommended.\",\n  \"productId\": 1,\n  \"userId\": 3\n}",
 							"options": {
 								"raw": {
 									"language": "json"
