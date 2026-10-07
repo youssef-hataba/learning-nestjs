@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
+import type { Relation } from "typeorm";
+import { Product } from "../products/product.entity.js";
+import { Review } from "../reviews/review.entity.js";
 
 export enum UserType {
     ADMIN = "admin",
@@ -36,4 +39,10 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @OneToMany(() => Product, (product) => product.user)
+    products: Relation<Product[]>;
+
+    @OneToMany(() => Review, (review) => review.user)
+    reviews: Relation<Review[]>;
 }
