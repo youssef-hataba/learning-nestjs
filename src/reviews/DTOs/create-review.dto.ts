@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, Min, Max, Length } from "class-validator";
+import { IsNotEmpty, IsString, IsNumber, IsOptional, Min, Max, Length, IsUUID } from "class-validator";
 
 export class CreateReviewDto {
     @IsNumber({}, { message: "Rating must be a number" })
@@ -13,10 +13,10 @@ export class CreateReviewDto {
     comment: string;
 
     @IsOptional()
-    @IsNumber({}, { message: "productId must be a number" })
-    productId?: number;
+    @IsUUID("4", { message: "productId must be a valid UUID" })
+    productId?: string;
 
     @IsOptional()
-    @IsNumber({}, { message: "userId must be a number" })
-    userId?: number;
+    @IsUUID("4", { message: "userId must be a valid UUID" })
+    userId?: string;
 }

@@ -7,8 +7,8 @@ import { User } from "../users/user.entity.js";
     name: "products"
 })
 export class Product {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Column()
     title: string;

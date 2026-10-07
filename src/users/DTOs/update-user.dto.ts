@@ -1,5 +1,4 @@
-import { IsOptional, IsString, IsEmail, IsEnum, Length } from "class-validator";
-import { UserType } from "../../utils/enums.js";
+import { IsOptional, IsString, IsEmail, Length } from "class-validator";
 
 export class UpdateUserDto {
     @IsOptional()
@@ -15,8 +14,4 @@ export class UpdateUserDto {
     @IsString()
     @Length(6, 50, { message: "Password must be at least 6 characters long" })
     password?: string;
-
-    @IsOptional()
-    @IsEnum(UserType, { message: "userType must be either admin or user" })
-    userType?: UserType;
 }

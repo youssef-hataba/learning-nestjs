@@ -18,7 +18,7 @@ export class UsersService {
         });
     }
 
-    async getUserById(id: number): Promise<User> {
+    async getUserById(id: string): Promise<User> {
         const user = await this.usersRepository.findOne({
             where: { id },
             relations: { products: true, reviews: true },
@@ -35,7 +35,7 @@ export class UsersService {
         return await this.getUserById(savedUser.id);
     }
 
-    async updateUser(id: number, body: UpdateUserDto): Promise<User> {
+    async updateUser(id: string, body: UpdateUserDto): Promise<User> {
         const user = await this.getUserById(id);
         user.username = body.username ?? user.username;
         user.email = body.email ?? user.email;
@@ -44,7 +44,7 @@ export class UsersService {
         return await this.getUserById(id);
     }
 
-    async deleteUser(id: number): Promise<{ message: string }> {
+    async deleteUser(id: string): Promise<{ message: string }> {
         const user = await this.getUserById(id);
         await this.usersRepository.remove(user);
         return {

@@ -7,8 +7,8 @@ import { User } from "../users/user.entity.js";
     name: "reviews",
 })
 export class Review {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Column()
     rating: number;

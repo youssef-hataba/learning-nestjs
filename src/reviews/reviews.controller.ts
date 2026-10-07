@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, ParseIntPipe } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Delete, ParseUUIDPipe } from "@nestjs/common";
 import { ReviewsService } from "./reviews.service.js";
 import { CreateReviewDto } from "./DTOs/create-review.dto.js";
 import { UpdateReviewDto } from "./DTOs/update-review.dto.js";
@@ -13,7 +13,7 @@ export class ReviewsController {
     }
 
     @Get(":id")
-    getReviewById(@Param("id", ParseIntPipe) id: number) {
+    getReviewById(@Param("id", ParseUUIDPipe) id: string) {
         return this.reviewsService.getReviewById(id);
     }
 
@@ -24,14 +24,14 @@ export class ReviewsController {
 
     @Put(":id")
     updateReview(
-        @Param("id", ParseIntPipe) id: number,
+        @Param("id", ParseUUIDPipe) id: string,
         @Body() body: UpdateReviewDto
     ) {
         return this.reviewsService.updateReview(id, body);
     }
 
     @Delete(":id")
-    deleteReview(@Param("id", ParseIntPipe) id: number) {
+    deleteReview(@Param("id", ParseUUIDPipe) id: string) {
         return this.reviewsService.deleteReview(id);
     }
 }

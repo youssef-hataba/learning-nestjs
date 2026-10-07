@@ -18,7 +18,7 @@ export class ReviewsService {
         });
     }
 
-    async getReviewById(id: number): Promise<Review> {
+    async getReviewById(id: string): Promise<Review> {
         const review = await this.reviewsRepository.findOne({
             where: { id },
             relations: { product: true, user: true },
@@ -39,14 +39,14 @@ export class ReviewsService {
         return await this.reviewsRepository.save(newReview);
     }
 
-    async updateReview(id: number, body: UpdateReviewDto): Promise<Review> {
+    async updateReview(id: string, body: UpdateReviewDto): Promise<Review> {
         const review = await this.getReviewById(id);
         review.rating = body.rating ?? review.rating;
         review.comment = body.comment ?? review.comment;
         return await this.reviewsRepository.save(review);
     }
 
-    async deleteReview(id: number): Promise<{ message: string }> {
+    async deleteReview(id: string): Promise<{ message: string }> {
         const review = await this.getReviewById(id);
         await this.reviewsRepository.remove(review);
         return {
