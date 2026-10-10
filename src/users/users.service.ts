@@ -1,19 +1,27 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { JwtService } from "@nestjs/jwt";
 import bcrypt from "bcryptjs";
 import { CreateUserDto } from "./DTOs/create-user.dto.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
 import { RegisterDto } from "./DTOs/register.dto.js";
 import { LoginDto } from "./DTOs/login.dto.js";
 import { User } from "./user.entity.js";
+import { JwtPayload } from "../utils/types.js";
+import { UserType } from "../utils/enums.js";
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
+        private readonly jwtService: JwtService,
     ) {}
+
+    private generateJWT(payload: JwtPayload): string {
+        return this.jwtService.sign(payload);
+    }
 
     async getAllUsers(): Promise<User[]> {
         return await this.usersRepository.find({
@@ -32,7 +40,7 @@ export class UsersService {
         return user;
     }
 
-    async register(body: RegisterDto): Promise<{ message: string; user: Partial<User> }> {
+    async register(body: RegisterDto): Promise<{ message: string; user: Partial<User>; token: string }> {
         const { username, email, password, confirmPassword } = body;
 
         if (password !== confirmPassword) {
@@ -57,23 +65,31 @@ export class UsersService {
             username,
             email,
             password: hashedPassword,
+            userType: UserType.USER,
         });
 
         const savedUser = await this.usersRepository.save(newUser);
         const { password: _, ...userWithoutPassword } = savedUser;
 
+        const token = this.generateJWT({
+            userId: savedUser.id,
+            userType: savedUser.userType,
+        });
+
         return {
             message: "User registered successfully",
             user: userWithoutPassword,
+            token,
         };
     }
 
-    async login(body: LoginDto): Promise<{ message: string; user: Partial<User> }> {
+    async login(body: LoginDto): Promise<{ message: string; user: Partial<User>; token: string }> {
         const { email, password } = body;
 
         const user = await this.usersRepository
             .createQueryBuilder("user")
             .addSelect("user.password")
+            .addSelect("user.userType")
             .where("user.email = :email", { email })
             .getOne();
 
@@ -88,9 +104,15 @@ export class UsersService {
 
         const { password: _, ...userWithoutPassword } = user;
 
+        const token = this.generateJWT({
+            userId: user.id,
+            userType: user.userType,
+        });
+
         return {
             message: "User logged in successfully",
             user: userWithoutPassword,
+            token,
         };
     }
 

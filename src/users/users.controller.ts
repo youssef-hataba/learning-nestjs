@@ -24,8 +24,8 @@ export class UsersController {
         return this.usersService.register(body);
     }
 
-    @Post("login")
-    @HttpCode(HttpStatus.OK)
+    @Post("login") // 201
+    @HttpCode(HttpStatus.OK) // 200
     login(@Body() body: LoginDto) {
         return this.usersService.login(body);
     }
