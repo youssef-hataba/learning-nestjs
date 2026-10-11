@@ -5,11 +5,13 @@ import { ConfigService } from "@nestjs/config";
 import { UsersController } from "./users.controller.js";
 import { UsersService } from "./users.service.js";
 import { User } from "./user.entity.js";
+import { AuthGuard } from "./guards/auth.guard.js";
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([User]),
         JwtModule.registerAsync({
+            global: true,
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
                 secret: configService.get<string>("JWT_SECRET"),
@@ -20,7 +22,7 @@ import { User } from "./user.entity.js";
         }),
     ],
     controllers: [UsersController],
-    providers: [UsersService],
-    exports: [UsersService],
+    providers: [UsersService, AuthGuard],
+    exports: [UsersService, AuthGuard],
 })
 export class UsersModule { }

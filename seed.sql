@@ -3,9 +3,9 @@ TRUNCATE TABLE users, products, reviews CASCADE;
 
 -- 2. Seed Users
 INSERT INTO users (id, username, email, password, "userType", "isAccountVerified", "createdAt", "updatedAt") VALUES
-('a1111111-1111-4111-8111-111111111111', 'youssef_admin', 'admin@example.com', 'Admin@123456', 'admin', true, NOW(), NOW()),
-('a2222222-2222-4222-8222-222222222222', 'ahmed_seller', 'ahmed@example.com', 'Password@123', 'user', true, NOW(), NOW()),
-('a3333333-3333-4333-8333-333333333333', 'sara_buyer', 'sara@example.com', 'Password@123', 'user', true, NOW(), NOW());
+('a1111111-1111-4111-8111-111111111111', 'youssef_admin', 'admin@example.com', '$2b$10$l1bcXjUM51NIgtN8UgnRhO9rOgbdlwiu7GKR9iF9GL8JnJgaMsHLy', 'admin', true, NOW(), NOW()),
+('a2222222-2222-4222-8222-222222222222', 'ahmed_seller', 'ahmed@example.com', '$2b$10$8DUik/QThMh0cLPmssKPTemT.4PzV/WqZgMNB0/nXksJHO3fJBTgW', 'user', true, NOW(), NOW()),
+('a3333333-3333-4333-8333-333333333333', 'sara_buyer', 'sara@example.com', '$2b$10$8DUik/QThMh0cLPmssKPTemT.4PzV/WqZgMNB0/nXksJHO3fJBTgW', 'user', true, NOW(), NOW());
 
 -- 3. Seed Products (Linked to Users via userId)
 INSERT INTO products (id, title, description, price, "userId", "createdAt", "updatedAt") VALUES
