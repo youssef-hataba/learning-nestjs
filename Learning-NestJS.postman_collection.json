@@ -227,6 +227,31 @@
           "response": []
         },
         {
+          "name": "👤 Get Current User Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "### 👤 Get Current User Profile (Me)\nFetches the authenticated user's profile using the JWT token passed in the Authorization header.\n\n* **Method:** GET\n* **URL:** {{baseUrl}}/users/auth/me\n* **Header:** Authorization: Bearer <token>\n* **Throws:** 401 Unauthorized if token is missing, invalid, or expired."
+          },
+          "response": []
+        },
+        {
           "name": "👥 Get All Users",
           "request": {
             "method": "GET",

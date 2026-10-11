@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
@@ -21,6 +21,23 @@ export class UsersService {
 
     private generateJWT(payload: JwtPayload): string {
         return this.jwtService.sign(payload);
+    }
+
+    verifyToken(token: string): JwtPayload {
+        if (!token) {
+            throw new UnauthorizedException("No token provided");
+        }
+        const cleanToken = token.startsWith("Bearer ") ? token.slice(7).trim() : token.trim();
+        try {
+            return this.jwtService.verify<JwtPayload>(cleanToken);
+        } catch {
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+    }
+
+    async getMe(token: string): Promise<User> {
+        const payload = this.verifyToken(token);
+        return await this.getUserById(payload.userId);
     }
 
     async getAllUsers(): Promise<User[]> {

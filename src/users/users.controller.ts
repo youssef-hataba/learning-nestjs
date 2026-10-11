@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, ParseUUIDPipe, HttpCode, HttpStatus } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Delete, ParseUUIDPipe, HttpCode, HttpStatus, Headers } from "@nestjs/common";
 import { UsersService } from "./users.service.js";
 import { CreateUserDto } from "./DTOs/create-user.dto.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
@@ -8,6 +8,11 @@ import { LoginDto } from "./DTOs/login.dto.js";
 @Controller("users/auth")
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
+
+    @Get("me")
+    getMe(@Headers("authorization") authorization: string) {
+        return this.usersService.getMe(authorization);
+    }
 
     @Get()
     getAllUsers() {
