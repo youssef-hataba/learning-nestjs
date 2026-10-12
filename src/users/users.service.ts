@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import bcrypt from "bcryptjs";
-import { CreateUserDto } from "./DTOs/create-user.dto.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
 import { RegisterDto } from "./DTOs/register.dto.js";
 import { LoginDto } from "./DTOs/login.dto.js";
@@ -23,7 +22,7 @@ export class UsersService {
         return this.jwtService.sign(payload);
     }
 
-    verifyToken(token: string): JwtPayload {
+    private verifyToken(token: string): JwtPayload {
         if (!token) {
             throw new UnauthorizedException("No token provided");
         }
@@ -66,9 +65,15 @@ export class UsersService {
 
         const existingUser = await this.usersRepository.findOne({
             where: [{ email }, { username }],
+            withDeleted: true,
         });
 
         if (existingUser) {
+            if (existingUser.deletedAt) {
+                throw new BadRequestException(
+                    "An account with this email/username was deleted. Please log in within 30 days of deletion to restore it."
+                );
+            }
             if (existingUser.email === email) {
                 throw new BadRequestException("A user with this email already exists");
             }
@@ -105,6 +110,7 @@ export class UsersService {
 
         const user = await this.usersRepository
             .createQueryBuilder("user")
+            .withDeleted()
             .addSelect("user.password")
             .addSelect("user.userType")
             .where("user.email = :email", { email })
@@ -117,6 +123,20 @@ export class UsersService {
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             throw new BadRequestException("Invalid email or password");
+        }
+
+        // Soft-delete 30-day grace period logic
+        if (user.deletedAt) {
+            const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+            const timeSinceDeletion = Date.now() - new Date(user.deletedAt).getTime();
+
+            if (timeSinceDeletion > thirtyDaysInMs) {
+                throw new BadRequestException("This account was deleted more than 30 days ago and cannot be recovered.");
+            }
+
+            // Restore account if user logs in within 30 days
+            await this.usersRepository.restore(user.id);
+            user.deletedAt = null;
         }
 
         const { password: _, ...userWithoutPassword } = user;
@@ -133,21 +153,11 @@ export class UsersService {
         };
     }
 
-    async createUser(body: CreateUserDto): Promise<User> {
-        let password = body.password;
-        if (password) {
-            const salt = await bcrypt.genSalt(10);
-            password = await bcrypt.hash(password, salt);
+    async updateUser(id: string, body: UpdateUserDto, currentUser: JwtPayload): Promise<User> {
+        if (currentUser.userId !== id && currentUser.userType !== UserType.ADMIN) {
+            throw new ForbiddenException("You do not have permission to update this user account");
         }
-        const newUser = this.usersRepository.create({
-            ...body,
-            password,
-        });
-        const savedUser = await this.usersRepository.save(newUser);
-        return await this.getUserById(savedUser.id);
-    }
 
-    async updateUser(id: string, body: UpdateUserDto): Promise<User> {
         const user = await this.getUserById(id);
         user.username = body.username ?? user.username;
         user.email = body.email ?? user.email;
@@ -159,11 +169,15 @@ export class UsersService {
         return await this.getUserById(id);
     }
 
-    async deleteUser(id: string): Promise<{ message: string }> {
+    async deleteUser(id: string, currentUser: JwtPayload): Promise<{ message: string }> {
+        if (currentUser.userId !== id && currentUser.userType !== UserType.ADMIN) {
+            throw new ForbiddenException("You do not have permission to delete this user account");
+        }
+
         const user = await this.getUserById(id);
-        await this.usersRepository.remove(user);
+        await this.usersRepository.softRemove(user);
         return {
-            message: "User deleted successfully",
+            message: "User account deleted successfully. You have 30 days to log back in to reactivate your account.",
         };
     }
 }

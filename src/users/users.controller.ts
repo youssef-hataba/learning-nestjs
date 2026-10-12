@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, Delete, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service.js";
-import { CreateUserDto } from "./DTOs/create-user.dto.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
 import { RegisterDto } from "./DTOs/register.dto.js";
 import { LoginDto } from "./DTOs/login.dto.js";
@@ -44,21 +43,22 @@ export class UsersController {
         return this.usersService.login(body);
     }
 
-    @Post()
-    createUser(@Body() body: CreateUserDto) {
-        return this.usersService.createUser(body);
-    }
-
     @Put(":id")
+    @UseGuards(AuthGuard)
     updateUser(
         @Param("id", ParseUUIDPipe) id: string,
-        @Body() body: UpdateUserDto
+        @Body() body: UpdateUserDto,
+        @CurrentUser() currentUser: JwtPayload,
     ) {
-        return this.usersService.updateUser(id, body);
+        return this.usersService.updateUser(id, body, currentUser);
     }
 
     @Delete(":id")
-    deleteUser(@Param("id", ParseUUIDPipe) id: string) {
-        return this.usersService.deleteUser(id);
+    @UseGuards(AuthGuard)
+    deleteUser(
+        @Param("id", ParseUUIDPipe) id: string,
+        @CurrentUser() currentUser: JwtPayload,
+    ) {
+        return this.usersService.deleteUser(id, currentUser);
     }
 }

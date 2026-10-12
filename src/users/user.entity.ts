@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany } from "typeorm";
 import type { Relation } from "typeorm";
 import { Product } from "../products/product.entity.js";
 import { Review } from "../reviews/review.entity.js";
@@ -36,6 +36,9 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt: Date | null;
 
     @OneToMany(() => Product, (product) => product.user)
     products: Relation<Product[]>;
