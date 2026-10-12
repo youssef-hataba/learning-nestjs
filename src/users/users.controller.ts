@@ -5,7 +5,10 @@ import { UpdateUserDto } from "./DTOs/update-user.dto.js";
 import { RegisterDto } from "./DTOs/register.dto.js";
 import { LoginDto } from "./DTOs/login.dto.js";
 import { AuthGuard } from "./guards/auth.guard.js";
+import { RolesGuard } from "./guards/roles.guard.js";
 import { CurrentUser } from "./decorators/current-user.decorator.js";
+import { Roles } from "./decorators/user-role.decorator.js";
+import { UserType } from "../utils/enums.js";
 import type { JwtPayload } from "../utils/types.js";
 
 @Controller("users/auth")
@@ -19,6 +22,8 @@ export class UsersController {
     }
 
     @Get()
+    @Roles(UserType.ADMIN)
+    @UseGuards(AuthGuard, RolesGuard)
     getAllUsers() {
         return this.usersService.getAllUsers();
     }

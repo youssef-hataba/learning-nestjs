@@ -6,6 +6,7 @@ import { UsersController } from "./users.controller.js";
 import { UsersService } from "./users.service.js";
 import { User } from "./user.entity.js";
 import { AuthGuard } from "./guards/auth.guard.js";
+import { RolesGuard } from "./guards/roles.guard.js";
 
 @Module({
     imports: [
@@ -22,7 +23,7 @@ import { AuthGuard } from "./guards/auth.guard.js";
         }),
     ],
     controllers: [UsersController],
-    providers: [UsersService, AuthGuard],
-    exports: [UsersService, AuthGuard],
+    providers: [UsersService, AuthGuard, RolesGuard],
+    exports: [UsersService, AuthGuard, RolesGuard],
 })
 export class UsersModule { }

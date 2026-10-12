@@ -252,10 +252,15 @@
           "response": []
         },
         {
-          "name": "👥 Get All Users",
+          "name": "👥 Get All Users (Admin Only)",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/users/auth",
               "host": [
@@ -266,7 +271,7 @@
                 "auth"
               ]
             },
-            "description": "### 👥 Get All Users\nRetrieves a list of all registered users.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users/auth`"
+            "description": "### 👥 Get All Users (Admin Only)\nRetrieves a list of all registered users. Restricted to users with the `admin` role.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users/auth`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Throws:**\n  * `401 Unauthorized` if token is missing or invalid.\n  * `403 Forbidden` if authenticated user is not an Admin."
           },
           "response": []
         },
