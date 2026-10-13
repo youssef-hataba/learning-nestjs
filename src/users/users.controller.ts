@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, Patch, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Delete, Patch, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards, UseInterceptors, UploadedFile, Res, BadRequestException } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import type { Response } from "express";
 import { UsersService } from "./users.service.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
 import { RegisterDto } from "./DTOs/register.dto.js";
@@ -9,6 +11,7 @@ import { CurrentUser } from "./decorators/current-user.decorator.js";
 import { Roles } from "./decorators/user-role.decorator.js";
 import { UserType } from "../utils/enums.js";
 import type { JwtPayload } from "../utils/types.js";
+import { profileImageUploadOptions } from "./helpers/profile-image-upload.helper.js";
 
 @Controller("users/auth")
 export class UsersController {
@@ -36,6 +39,38 @@ export class UsersController {
     @UseGuards(AuthGuard)
     deleteMe(@CurrentUser() user: JwtPayload) {
         return this.usersService.deleteUser(user.userId, false);
+    }
+
+    // ==========================================
+    // 🖼️ PROFILE IMAGE (Self-Service)
+    // ==========================================
+    @Post("profile-image")
+    @UseGuards(AuthGuard)
+    @UseInterceptors(FileInterceptor("image", profileImageUploadOptions))
+    uploadProfileImage(
+        @CurrentUser() user: JwtPayload,
+        @UploadedFile() file?: Express.Multer.File,
+    ) {
+        if (!file) {
+            throw new BadRequestException("Profile image file is required");
+        }
+        return this.usersService.setProfileImage(user.userId, file.filename);
+    }
+
+    @Get("profile-image")
+    @UseGuards(AuthGuard)
+    async getProfileImage(
+        @CurrentUser() user: JwtPayload,
+        @Res() res: Response,
+    ) {
+        const filePath = await this.usersService.getProfileImagePath(user.userId);
+        res.sendFile(filePath);
+    }
+
+    @Delete("profile-image")
+    @UseGuards(AuthGuard)
+    removeProfileImage(@CurrentUser() user: JwtPayload) {
+        return this.usersService.removeProfileImage(user.userId);
     }
 
     // ==========================================

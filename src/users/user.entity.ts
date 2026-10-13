@@ -31,6 +31,9 @@ export class User {
     @Column({ default: false })
     isAccountVerified: boolean;
 
+    @Column({ nullable: true, type: "varchar", default: null })
+    profileImage: string | null;
+
     @CreateDateColumn()
     createdAt: Date;
 

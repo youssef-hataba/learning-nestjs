@@ -374,6 +374,92 @@
           "response": []
         },
         {
+          "name": "🖼️ Upload Profile Image",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": [],
+                  "description": "Image file (JPEG, JPG, PNG, WEBP, max 2MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/profile-image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "profile-image"
+              ]
+            },
+            "description": "### 🖼️ Upload Profile Image\nUploads or replaces the authenticated user's profile image using Multer diskStorage. If an existing image exists, it is automatically removed from disk.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/users/auth/profile-image`\n* **Header:** `Authorization: Bearer <token>`\n* **Body:** `form-data` with key `image` (file)\n* **Allowed Formats:** JPEG, JPG, PNG, WEBP\n* **Max Size:** 2 MB\n* **Naming:** Automatically suffixes duplicates with `(1)`, `(2)`, etc."
+          },
+          "response": []
+        },
+        {
+          "name": "🖼️ Get Profile Image",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/profile-image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "profile-image"
+              ]
+            },
+            "description": "### 🖼️ Get Profile Image\nStreams/downloads the authenticated user's profile image file from disk storage.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users/auth/profile-image`\n* **Header:** `Authorization: Bearer <token>`\n* **Throws:** `404 Not Found` if user has no profile image or file is missing on disk."
+          },
+          "response": []
+        },
+        {
+          "name": "🗑️ Remove Profile Image",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/profile-image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "profile-image"
+              ]
+            },
+            "description": "### 🗑️ Remove Profile Image\nDeletes the authenticated user's profile image from disk storage and sets `profileImage` to null in the database.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/users/auth/profile-image`\n* **Header:** `Authorization: Bearer <token>`\n* **Throws:** `400 Bad Request` if user does not have a profile image."
+          },
+          "response": []
+        },
+        {
           "name": "👥 Get All Users (Admin Only)",
           "request": {
             "method": "GET",

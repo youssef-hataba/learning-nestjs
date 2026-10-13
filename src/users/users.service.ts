@@ -9,6 +9,9 @@ import { LoginDto } from "./DTOs/login.dto.js";
 import { User } from "./user.entity.js";
 import { JwtPayload } from "../utils/types.js";
 import { UserType } from "../utils/enums.js";
+import * as fs from "fs";
+import * as path from "path";
+import { PROFILE_IMAGES_DIR } from "./helpers/profile-image-upload.helper.js";
 
 @Injectable()
 export class UsersService {
@@ -207,4 +210,71 @@ export class UsersService {
             message: "User account restored successfully by administrator.",
         };
     }
+
+    // ==========================================
+    // 🖼️ PROFILE IMAGE MANAGEMENT
+    // ==========================================
+
+    async setProfileImage(userId: string, filename: string): Promise<{ message: string; profileImage: string }> {
+        const user = await this.getUserById(userId);
+        const isUpdated = Boolean(user.profileImage);
+
+        // If user already has an image on disk, remove it before setting the new one
+        if (user.profileImage) {
+            this.deleteImageFileFromDisk(user.profileImage);
+        }
+
+        user.profileImage = filename;
+        await this.usersRepository.save(user);
+
+        return {
+            message: isUpdated ? "Profile image updated successfully" : "Profile image set successfully",
+            profileImage: filename,
+        };
+    }
+
+    async removeProfileImage(userId: string): Promise<{ message: string }> {
+        const user = await this.getUserById(userId);
+
+        if (!user.profileImage) {
+            throw new BadRequestException("User does not have a profile image to remove");
+        }
+
+        // Delete image file from disk
+        this.deleteImageFileFromDisk(user.profileImage);
+
+        user.profileImage = null;
+        await this.usersRepository.save(user);
+
+        return {
+            message: "Profile image removed successfully",
+        };
+    }
+
+    async getProfileImagePath(userId: string): Promise<string> {
+        const user = await this.getUserById(userId);
+
+        if (!user.profileImage) {
+            throw new NotFoundException("User does not have a profile image");
+        }
+
+        const filePath = path.join(PROFILE_IMAGES_DIR, user.profileImage);
+        if (!fs.existsSync(filePath)) {
+            throw new NotFoundException("Profile image file not found on disk");
+        }
+
+        return filePath;
+    }
+
+    private deleteImageFileFromDisk(filename: string): void {
+        try {
+            const filePath = path.join(PROFILE_IMAGES_DIR, filename);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        } catch (error) {
+            console.error(`Failed to delete profile image "${filename}" from disk:`, error);
+        }
+    }
 }
+
