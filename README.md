@@ -25,6 +25,18 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## 📚 Project Architecture & Engineering Guides
+
+Detailed engineering guides and architectural documentation for the features in this project:
+
+- [Email Notification System Architecture Guide (V1)](docs/EMAIL_NOTIFICATION_SYSTEM_GUIDE.md): Resend integration, EJS template engine, in-memory non-blocking email flow.
+- [Email Notification System Architecture Guide (V2)](docs/EMAIL_NOTIFICATION_SYSTEM_V2_GUIDE.md): Enterprise Event-Driven email flow with BullMQ, Redis durable queue, and exponential retries.
+- [Redis, BullMQ & Event-Driven Architecture Concepts](docs/REDIS_BULLMQ_AND_EVENT_DRIVEN_CONCEPTS.md): A beginner-friendly conceptual guide explaining Redis, message queues, jobs, and event-driven patterns from scratch.
+- [Authentication & RBAC Guide](docs/AUTH_AND_RBAC_GUIDE.md): Authentication, JWT token lifecycle, and role-based access control.
+- [Background Task Scheduling & Cron Job Guide](docs/CRON_JOB_AND_CLEANUP_GUIDE.md): Automated account purging & soft delete lifecycle management.
+- [Interceptors Architecture Guide](docs/INTERCEPTORS_GUIDE.md): Response transformations, logging, and error handling.
+- [Self-Service vs Admin Architecture](docs/SELF_SERVICE_VS_ADMIN_ARCHITECTURE.md): User privileges, security boundaries, and admin controls.
+
 ## Project setup
 
 ```bash

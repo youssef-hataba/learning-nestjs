@@ -2,9 +2,12 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ScheduleModule } from "@nestjs/schedule";
+import { EventEmitterModule } from "@nestjs/event-emitter";
+import { BullModule } from "@nestjs/bullmq";
 import { UsersModule } from "./users/users.module.js";
 import { ProductsModule } from "./products/products.module.js";
 import { ReviewsModule } from "./reviews/reviews.module.js";
+import { MailModule } from "./mail/mail.module.js";
 import { AppController } from "./app.controller.js";
 
 @Module({
@@ -13,6 +16,16 @@ import { AppController } from "./app.controller.js";
             isGlobal: true,
         }),
         ScheduleModule.forRoot(),
+        EventEmitterModule.forRoot(),
+        BullModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                connection: {
+                    host: configService.get<string>("REDIS_HOST", "localhost"),
+                    port: Number(configService.get<number>("REDIS_PORT", 6379)),
+                },
+            }),
+        }),
         TypeOrmModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
@@ -29,6 +42,7 @@ import { AppController } from "./app.controller.js";
         UsersModule,
         ProductsModule,
         ReviewsModule,
+        MailModule,
     ],
     controllers: [AppController],
 })

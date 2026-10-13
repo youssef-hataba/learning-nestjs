@@ -48,12 +48,13 @@ export class MailService {
 
             if (response.error) {
                 this.logger.error(`Resend returned an error while sending to ${to}: ${response.error.message}`, response.error);
-                return;
+                throw new Error(`Resend Error: ${response.error.message}`);
             }
 
             this.logger.log(`Email successfully sent to ${to} (Message ID: ${response.data?.id})`);
         } catch (error: any) {
             this.logger.error(`Failed to send email to ${to}: ${error?.message ?? error}`, error?.stack);
+            throw error;
         }
     }
 

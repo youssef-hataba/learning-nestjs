@@ -8,7 +8,6 @@ import { UsersCleanupService } from "./users-cleanup.service.js";
 import { User } from "./user.entity.js";
 import { AuthGuard } from "./guards/auth.guard.js";
 import { RolesGuard } from "./guards/roles.guard.js";
-import { MailModule } from "../mail/mail.module.js";
 
 @Module({
     imports: [
@@ -23,7 +22,6 @@ import { MailModule } from "../mail/mail.module.js";
                 },
             }),
         }),
-        MailModule,
     ],
     controllers: [UsersController],
     providers: [UsersService, UsersCleanupService, AuthGuard, RolesGuard],
