@@ -9,6 +9,7 @@ import { LoginDto } from "./DTOs/login.dto.js";
 import { User } from "./user.entity.js";
 import { JwtPayload } from "../utils/types.js";
 import { UserType } from "../utils/enums.js";
+import { MailService } from "../mail/mail.service.js";
 import * as fs from "fs";
 import * as path from "path";
 import { PROFILE_IMAGES_DIR } from "./helpers/profile-image-upload.helper.js";
@@ -19,6 +20,7 @@ export class UsersService {
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
         private readonly jwtService: JwtService,
+        private readonly mailService: MailService,
     ) {}
 
     private generateJWT(payload: JwtPayload): string {
@@ -99,6 +101,9 @@ export class UsersService {
 
         const savedUser = await this.usersRepository.save(newUser);
         const { password: _, ...userWithoutPassword } = savedUser;
+
+        //* Send welcome email in background (non-blocking)
+        this.mailService.sendWelcomeEmail(savedUser.email, savedUser.username).catch(() => {});
 
         const token = this.generateJWT({
             userId: savedUser.id,
