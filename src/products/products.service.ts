@@ -12,9 +12,12 @@ export class ProductsService {
         private readonly productsRepository: Repository<Product>
     ) { }
 
-    async createProduct(dto: CreateProductDto) {
-        const newProduct = this.productsRepository.create(dto)
-        return await this.productsRepository.save(newProduct)
+    async createProduct(dto: CreateProductDto, userId: string): Promise<Product> {
+        const newProduct = this.productsRepository.create({
+            ...dto,
+            user: { id: userId } as any,
+        });
+        return await this.productsRepository.save(newProduct);
     }
 
     async getAllProducts() {

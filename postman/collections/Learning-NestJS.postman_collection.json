@@ -55,13 +55,17 @@
           "response": []
         },
         {
-          "name": "✨ Create Product",
+          "name": "✨ Create Product (Admin Only)",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
             ],
             "body": {
@@ -82,7 +86,7 @@
                 "products"
               ]
             },
-            "description": "### ✨ Create Product\nCreates a new product record in PostgreSQL.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/products`\n* **Body Validation:**\n  * `title`: String (3 - 30 chars, required)\n  * `description`: String (5 - 500 chars, required)\n  * `price`: Number (>= 0, required)"
+            "description": "### ✨ Create Product (Admin Only)\nCreates a new product record in PostgreSQL linked to the authenticated Admin user.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/products`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Body Validation:**\n  * `title`: String (3 - 30 chars, required)\n  * `description`: String (5 - 500 chars, required)\n  * `price`: Number (>= 0, required)\n* **Throws:**\n  * `401 Unauthorized` if token is missing or invalid.\n  * `403 Forbidden` if caller is not an Admin."
           },
           "response": []
         },

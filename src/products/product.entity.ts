@@ -28,6 +28,6 @@ export class Product {
     @OneToMany(() => Review, (review) => review.product)
     reviews: Relation<Review[]>;
 
-    @ManyToOne(() => User, (user) => user.products, { onDelete: "CASCADE" })
+    @ManyToOne(() => User, (user) => user.products, { onDelete: "CASCADE", nullable: false })
     user: Relation<User>;
 }
