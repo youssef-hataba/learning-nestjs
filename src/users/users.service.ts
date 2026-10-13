@@ -165,11 +165,7 @@ export class UsersService {
         };
     }
 
-    async updateUser(id: string, body: UpdateUserDto, currentUser: JwtPayload): Promise<User> {
-        if (currentUser.userId !== id && currentUser.userType !== UserType.ADMIN) {
-            throw new ForbiddenException("You do not have permission to update this user account");
-        }
-
+    async updateUser(id: string, body: UpdateUserDto): Promise<User> {
         const user = await this.getUserById(id);
         user.username = body.username ?? user.username;
         user.email = body.email ?? user.email;
@@ -180,13 +176,8 @@ export class UsersService {
         return await this.getUserById(id);
     }
 
-    async deleteUser(id: string, currentUser: JwtPayload): Promise<{ message: string }> {
-        if (currentUser.userId !== id && currentUser.userType !== UserType.ADMIN) {
-            throw new ForbiddenException("You do not have permission to delete this user account");
-        }
-
+    async deleteUser(id: string, isBannedByAdmin: boolean = false): Promise<{ message: string }> {
         const user = await this.getUserById(id);
-        const isBannedByAdmin = currentUser.userType === UserType.ADMIN && currentUser.userId !== id;
         user.deletedByAdmin = isBannedByAdmin;
         await this.usersRepository.save(user);
         await this.usersRepository.softRemove(user);

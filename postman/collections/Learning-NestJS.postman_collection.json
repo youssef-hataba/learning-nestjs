@@ -247,7 +247,70 @@
                 "me"
               ]
             },
-            "description": "### 👤 Get Current User Profile (Me)\nFetches the authenticated user's profile using the JWT token passed in the Authorization header.\n\n* **Method:** GET\n* **URL:** {{baseUrl}}/users/auth/me\n* **Header:** Authorization: Bearer <token>\n* **Throws:** 401 Unauthorized if token is missing, invalid, or expired."
+            "description": "### 👤 Get Current User Profile (Me)\nFetches the authenticated user's profile using the JWT token passed in the Authorization header.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users/auth/me`\n* **Header:** `Authorization: Bearer <token>`\n* **Throws:** `401 Unauthorized` if token is missing, invalid, or expired."
+          },
+          "response": []
+        },
+        {
+          "name": "✏️ Update Current User Profile (Me)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"my_updated_username\",\n  \"email\": \"my_updated_email@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "### ✏️ Update Current User Profile (Me)\nUpdates the authenticated user's profile using their JWT token (no ID needed in URL).\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/users/auth/me`\n* **Header:** `Authorization: Bearer <token>`\n* **Throws:** `401 Unauthorized` if token is missing or invalid."
+          },
+          "response": []
+        },
+        {
+          "name": "🗑️ Delete Current User Account (Me - Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "### 🗑️ Delete Current User Account (Me - Soft Delete)\nSoft-deletes the caller's own account. The user has a **30-day grace period** to reactivate the account by logging back in.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/users/auth/me`\n* **Header:** `Authorization: Bearer <token>`\n* **Throws:** `401 Unauthorized` if token is missing or invalid."
           },
           "response": []
         },
@@ -303,7 +366,7 @@
           "response": []
         },
         {
-          "name": "✏️ Update User",
+          "name": "✏️ Update User By ID (Admin Only)",
           "request": {
             "method": "PUT",
             "header": [
@@ -318,7 +381,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"youssef_updated\",\n  \"email\": \"youssef_updated@example.com\"\n}",
+              "raw": "{\n  \"username\": \"admin_updated_user\",\n  \"email\": \"admin_updated_user@example.com\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -343,12 +406,12 @@
                 }
               ]
             },
-            "description": "### ✏️ Update User\nUpdates user information. Restricted to the user themselves (`:id` matches token `userId`) or an Admin.\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/users/auth/:id`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Owner or Admin\n* **Throws:**\n  * `401 Unauthorized` if token is missing/invalid.\n  * `403 Forbidden` if attempting to update another user without Admin privileges."
+            "description": "### ✏️ Update User By ID (Admin Only)\nUpdates another user's information. Restricted to Admins.\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/users/auth/:id`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Throws:**\n  * `401 Unauthorized` if token is missing/invalid.\n  * `403 Forbidden` if caller is not an Admin."
           },
           "response": []
         },
         {
-          "name": "🗑️ Delete User (Soft Delete)",
+          "name": "🗑️ Delete / Ban User By ID (Admin Only)",
           "request": {
             "method": "DELETE",
             "header": [
@@ -375,7 +438,7 @@
                 }
               ]
             },
-            "description": "### 🗑️ Delete User (Soft Delete)\nSoft-deletes a user account. If self-deleted, the user has a **30-day grace period** to reactivate by logging in. If deleted by an Admin, it is treated as a suspension and requires an Admin to restore it.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/users/auth/:id`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Owner or Admin\n* **Throws:**\n  * `401 Unauthorized` if token is missing/invalid.\n  * `403 Forbidden` if attempting to delete another user without Admin privileges."
+            "description": "### 🗑️ Delete / Ban User By ID (Admin Only)\nSuspends/bans a user by ID. The user will be blocked from logging in, and must appeal to an admin to restore their account.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/users/auth/:id`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Throws:**\n  * `401 Unauthorized` if token is missing/invalid.\n  * `403 Forbidden` if caller is not an Admin."
           },
           "response": []
         },

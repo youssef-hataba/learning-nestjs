@@ -14,12 +14,47 @@ import type { JwtPayload } from "../utils/types.js";
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
+    // ==========================================
+    // 👤 CURRENT USER PROFILE (Self-Service)
+    // ==========================================
     @Get("me")
     @UseGuards(AuthGuard)
     getMe(@CurrentUser() user: JwtPayload) {
         return this.usersService.getUserById(user.userId);
     }
 
+    @Put("me")
+    @UseGuards(AuthGuard)
+    updateMe(
+        @CurrentUser() user: JwtPayload,
+        @Body() body: UpdateUserDto,
+    ) {
+        return this.usersService.updateUser(user.userId, body);
+    }
+
+    @Delete("me")
+    @UseGuards(AuthGuard)
+    deleteMe(@CurrentUser() user: JwtPayload) {
+        return this.usersService.deleteUser(user.userId, false);
+    }
+
+    // ==========================================
+    // 🔑 AUTHENTICATION
+    // ==========================================
+    @Post("register")
+    register(@Body() body: RegisterDto) {
+        return this.usersService.register(body);
+    }
+
+    @Post("login") // 201
+    @HttpCode(HttpStatus.OK) // 200
+    login(@Body() body: LoginDto) {
+        return this.usersService.login(body);
+    }
+
+    // ==========================================
+    // 🛠️ ADMIN & GENERAL USER MANAGEMENT
+    // ==========================================
     @Get()
     @Roles(UserType.ADMIN)
     @UseGuards(AuthGuard, RolesGuard)
@@ -32,34 +67,21 @@ export class UsersController {
         return this.usersService.getUserById(id);
     }
 
-    @Post("register")
-    register(@Body() body: RegisterDto) {
-        return this.usersService.register(body);
-    }
-
-    @Post("login") // 201
-    @HttpCode(HttpStatus.OK) // 200
-    login(@Body() body: LoginDto) {
-        return this.usersService.login(body);
-    }
-
     @Put(":id")
-    @UseGuards(AuthGuard)
-    updateUser(
+    @Roles(UserType.ADMIN)
+    @UseGuards(AuthGuard, RolesGuard)
+    updateUserByAdmin(
         @Param("id", ParseUUIDPipe) id: string,
         @Body() body: UpdateUserDto,
-        @CurrentUser() currentUser: JwtPayload,
     ) {
-        return this.usersService.updateUser(id, body, currentUser);
+        return this.usersService.updateUser(id, body);
     }
 
     @Delete(":id")
-    @UseGuards(AuthGuard)
-    deleteUser(
-        @Param("id", ParseUUIDPipe) id: string,
-        @CurrentUser() currentUser: JwtPayload,
-    ) {
-        return this.usersService.deleteUser(id, currentUser);
+    @Roles(UserType.ADMIN)
+    @UseGuards(AuthGuard, RolesGuard)
+    deleteUserByAdmin(@Param("id", ParseUUIDPipe) id: string) {
+        return this.usersService.deleteUser(id, true);
     }
 
     @Patch(":id/restore")
