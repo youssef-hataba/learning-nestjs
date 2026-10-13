@@ -210,6 +210,114 @@
             "description": "### 🗑️ Delete Product (Admin Only)\nPermanently removes a product from PostgreSQL. Restricted to Admins.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/products/:id`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Success Response:** `{\"message\": \"Product deleted successfully\"}`\n* **Throws:**\n  * `401 Unauthorized` if token is missing or invalid.\n  * `403 Forbidden` if caller is not an Admin.\n  * `404 Not Found` if product does not exist."
           },
           "response": []
+        },
+        {
+          "name": "🖼️ Upload Product Images (Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [],
+                  "description": "Image files (JPEG, JPG, PNG, WEBP, max 5MB each, max 5 images)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products/:id/images",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                ":id",
+                "images"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "b1111111-1111-4111-8111-111111111111",
+                  "description": "Product UUID"
+                }
+              ]
+            },
+            "description": "### 🖼️ Upload Product Images (Admin Only)\nUploads multiple images for a product using Multer diskStorage (`uploads/products/`).\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/products/:id/images`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Body:** `form-data` with key `images` (supports multiple files)\n* **Allowed Formats:** JPEG, JPG, PNG, WEBP\n* **Max Size:** 5 MB per file, max 5 files per upload"
+          },
+          "response": []
+        },
+        {
+          "name": "🖼️ Get Product Image",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/images/:filename",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "images",
+                ":filename"
+              ],
+              "variable": [
+                {
+                  "key": "filename",
+                  "value": "product-image-example.jpg",
+                  "description": "Stored product image filename"
+                }
+              ]
+            },
+            "description": "### 🖼️ Get Product Image\nStreams a product image file from disk storage.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/products/images/:filename`\n* **Access:** Public\n* **Throws:** `404 Not Found` if image file is not found on disk."
+          },
+          "response": []
+        },
+        {
+          "name": "🗑️ Delete Product Image (Admin Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/products/:id/images/:filename",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                ":id",
+                "images",
+                ":filename"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "b1111111-1111-4111-8111-111111111111",
+                  "description": "Product UUID"
+                },
+                {
+                  "key": "filename",
+                  "value": "product-image-example.jpg",
+                  "description": "Filename of the image to remove"
+                }
+              ]
+            },
+            "description": "### 🗑️ Delete Product Image (Admin Only)\nRemoves a specific image from product entity and deletes the physical file from disk.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/products/:id/images/:filename`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Throws:** `404 Not Found` if product or image does not exist."
+          },
+          "response": []
         }
       ]
     },

@@ -19,6 +19,9 @@ export class Product {
     @Column()
     price: number;
 
+    @Column("text", { array: true, default: "{}" })
+    images: string[];
+
     @CreateDateColumn()
     createdAt: Date;
 
