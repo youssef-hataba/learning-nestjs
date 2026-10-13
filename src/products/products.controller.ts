@@ -35,6 +35,8 @@ export class ProductsController {
     }
 
     @Put(":id")
+    @Roles(UserType.ADMIN)
+    @UseGuards(AuthGuard, RolesGuard)
     updateProduct(
         @Param("id", ParseUUIDPipe) id: string,
         @Body() body: UpdateProductDto
@@ -43,6 +45,8 @@ export class ProductsController {
     }
 
     @Delete(":id")
+    @Roles(UserType.ADMIN)
+    @UseGuards(AuthGuard, RolesGuard)
     deleteProduct(@Param("id", ParseUUIDPipe) id: string) {
         return this.productsService.deleteProduct(id);
     }

@@ -91,13 +91,17 @@
           "response": []
         },
         {
-          "name": "✏️ Update Product",
+          "name": "✏️ Update Product (Admin Only)",
           "request": {
             "method": "PUT",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
             ],
             "body": {
@@ -126,15 +130,20 @@
                 }
               ]
             },
-            "description": "### ✏️ Update Product\nUpdates an existing product in the database.\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/products/:id`\n* **Body:** All fields are optional (`title`, `description`, `price`)."
+            "description": "### ✏️ Update Product (Admin Only)\nUpdates an existing product in the database. Restricted to Admins.\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/products/:id`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Body:** All fields are optional (`title`, `description`, `price`).\n* **Throws:**\n  * `401 Unauthorized` if token is missing or invalid.\n  * `403 Forbidden` if caller is not an Admin.\n  * `404 Not Found` if product does not exist."
           },
           "response": []
         },
         {
-          "name": "🗑️ Delete Product",
+          "name": "🗑️ Delete Product (Admin Only)",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/products/:id",
               "host": [
@@ -152,7 +161,7 @@
                 }
               ]
             },
-            "description": "### 🗑️ Delete Product\nPermanently removes a product from PostgreSQL.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/products/:id`\n* **Success Response:** `{\"message\": \"Product deleted successfully\"}`"
+            "description": "### 🗑️ Delete Product (Admin Only)\nPermanently removes a product from PostgreSQL. Restricted to Admins.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/products/:id`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Success Response:** `{\"message\": \"Product deleted successfully\"}`\n* **Throws:**\n  * `401 Unauthorized` if token is missing or invalid.\n  * `403 Forbidden` if caller is not an Admin.\n  * `404 Not Found` if product does not exist."
           },
           "response": []
         }

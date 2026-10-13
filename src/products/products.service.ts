@@ -20,9 +20,10 @@ export class ProductsService {
         return await this.productsRepository.save(newProduct);
     }
 
-    async getAllProducts() {
+    async getAllProducts(): Promise<Product[]> {
         return await this.productsRepository.find({
             relations: { reviews: true, user: true },
+            order: { createdAt: "DESC" },
         });
     }
 
@@ -38,21 +39,15 @@ export class ProductsService {
     }
 
     async updateProduct(id: string, dto: UpdateProductDto): Promise<Product> {
-        const product = await this.productsRepository.findOneBy({ id });
-        if (!product) {
-            throw new NotFoundException("Product not found");
-        }
+        const product = await this.getProductById(id);
         product.title = dto.title ?? product.title;
         product.description = dto.description ?? product.description;
         product.price = dto.price ?? product.price;
         return await this.productsRepository.save(product);
     }
 
-    async deleteProduct(id: string) {
-        const product = await this.productsRepository.findOneBy({ id });
-        if (!product) {
-            throw new NotFoundException("Product not found");
-        }
+    async deleteProduct(id: string): Promise<{ message: string }> {
+        const product = await this.getProductById(id);
         await this.productsRepository.remove(product);
         return {
             message: "Product deleted successfully",
