@@ -16,15 +16,61 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/products",
+              "raw": "{{baseUrl}}/products?page=1&limit=10&sortBy=createdAt&sortOrder=DESC",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "products"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "laptop",
+                  "description": "Search term matched against product title and description (case-insensitive)",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "100",
+                  "description": "Filter by minimum price",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "1500",
+                  "description": "Filter by maximum price",
+                  "disabled": true
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": "Filter products created by a specific user (UUID)",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Sort field: createdAt | price | title (default: createdAt)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "DESC",
+                  "description": "Sort order: ASC | DESC (default: DESC)"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (min: 1, default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (min: 1, default: 10)"
+                }
               ]
             },
-            "description": "### 📦 Get All Products\nFetches a list of all products from the PostgreSQL database along with matching reviews.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/products`\n* **Success Response:** `200 OK`"
+            "description": "### 📦 Get All Products\nFetches paginated products with dynamic filtering and sorting.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/products`\n* **Query Parameters:**\n  * `search` (optional): Search in title or description (ILIKE)\n  * `minPrice` / `maxPrice` (optional): Filter price range\n  * `userId` (optional): Filter by creator UUID\n  * `sortBy` (optional): `createdAt` | `price` | `title` (default: `createdAt`)\n  * `sortOrder` (optional): `ASC` | `DESC` (default: `DESC`)\n  * `page` (optional): Page number (default: `1`)\n  * `limit` (optional): Items per page (default: `10`)\n* **Success Response:** `200 OK` (returns `{ data, meta }`)"
           },
           "response": []
         },
