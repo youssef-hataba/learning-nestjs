@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Delete, Patch, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
 import { RegisterDto } from "./DTOs/register.dto.js";
@@ -60,5 +60,12 @@ export class UsersController {
         @CurrentUser() currentUser: JwtPayload,
     ) {
         return this.usersService.deleteUser(id, currentUser);
+    }
+
+    @Patch(":id/restore")
+    @Roles(UserType.ADMIN)
+    @UseGuards(AuthGuard, RolesGuard)
+    restoreUser(@Param("id", ParseUUIDPipe) id: string) {
+        return this.usersService.restoreUser(id);
     }
 }

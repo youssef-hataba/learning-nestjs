@@ -113,6 +113,7 @@ export class UsersService {
             .withDeleted()
             .addSelect("user.password")
             .addSelect("user.userType")
+            .addSelect("user.deletedByAdmin")
             .where("user.email = :email", { email })
             .getOne();
 
@@ -134,7 +135,14 @@ export class UsersService {
                 throw new BadRequestException("This account was deleted more than 30 days ago and cannot be recovered.");
             }
 
-            // Restore account if user logs in within 30 days
+            // If account was deleted/suspended by an Admin, user cannot auto-reactivate by logging in
+            if (user.deletedByAdmin) {
+                throw new ForbiddenException(
+                    "Your account has been suspended by an administrator. Please contact an administrator within 30 days to appeal or restore your account."
+                );
+            }
+
+            // Auto-restore account if user self-deleted and logs in within 30 days
             await this.usersRepository.restore(user.id);
             user.deletedAt = null;
         }
@@ -175,9 +183,34 @@ export class UsersService {
         }
 
         const user = await this.getUserById(id);
+        const isBannedByAdmin = currentUser.userType === UserType.ADMIN && currentUser.userId !== id;
+        user.deletedByAdmin = isBannedByAdmin;
+        await this.usersRepository.save(user);
         await this.usersRepository.softRemove(user);
+
         return {
-            message: "User account deleted successfully. You have 30 days to log back in to reactivate your account.",
+            message: isBannedByAdmin
+                ? "User account has been suspended by administrator."
+                : "User account deleted successfully. You have 30 days to log back in to reactivate your account.",
+        };
+    }
+
+    async restoreUser(id: string): Promise<{ message: string }> {
+        const user = await this.usersRepository.findOne({
+            where: { id },
+            withDeleted: true,
+        });
+
+        if (!user || !user.deletedAt) {
+            throw new NotFoundException("Suspended or deleted user not found");
+        }
+
+        await this.usersRepository.restore(id);
+        user.deletedByAdmin = false;
+        await this.usersRepository.save(user);
+
+        return {
+            message: "User account restored successfully by administrator.",
         };
     }
 }

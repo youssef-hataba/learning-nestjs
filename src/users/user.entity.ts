@@ -37,6 +37,9 @@ export class User {
     @UpdateDateColumn()
     updatedAt: Date;
 
+    @Column({ default: false })
+    deletedByAdmin: boolean;
+
     @DeleteDateColumn()
     deletedAt: Date | null;
 

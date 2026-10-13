@@ -206,3 +206,40 @@ getProfile(@CurrentUser() user: JwtPayload) {
     return user; // Access user.userId, user.userType directly
 }
 ```
+
+---
+
+## 8. Soft Deletion, Admin Bans & Daily Cron Cleanup
+
+### 1. Self-Deletion vs. Admin Ban
+We distinguish between user-initiated account deletion and administrative bans via the `deletedByAdmin` column:
+
+- **User Self-Deletion (`deletedByAdmin = false`):**
+  - Soft-deletes the record with `deletedAt = NOW()`.
+  - The user has a **30-day grace period** to change their mind.
+  - Logging in within 30 days automatically **restores** the account.
+- **Admin Ban / Deletion (`deletedByAdmin = true`):**
+  - Marks `deletedByAdmin = true` and soft-deletes the record.
+  - When the user attempts to log in within 30 days, they receive:
+    `403 Forbidden: "Your account has been suspended by an administrator. Please contact an administrator within 30 days to appeal."`
+  - The user **cannot** self-restore their account. Only an Admin can restore them via:
+    `PATCH /users/auth/:id/restore`
+
+### 2. Automatic Daily Cron Purge
+After 30 days of deletion, the account is permanently purged from PostgreSQL:
+- Managed by `UsersCleanupService` via `@nestjs/schedule`.
+- Runs automatically at **midnight (00:00:00)** daily:
+  ```typescript
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async handleExpiredAccountCleanup() {
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const expiredUsers = await this.usersRepository.find({
+          withDeleted: true,
+          where: { deletedAt: LessThan(thirtyDaysAgo) }
+      });
+      if (expiredUsers.length > 0) {
+          await this.usersRepository.remove(expiredUsers); // Permanent Hard Delete
+      }
+  }
+  ```
+
