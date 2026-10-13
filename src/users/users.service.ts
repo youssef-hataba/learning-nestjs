@@ -22,6 +22,11 @@ export class UsersService {
         return this.jwtService.sign(payload);
     }
 
+    private async hashPassword(password: string): Promise<string> {
+        const salt = await bcrypt.genSalt(10);
+        return await bcrypt.hash(password, salt);
+    }
+
     private verifyToken(token: string): JwtPayload {
         if (!token) {
             throw new UnauthorizedException("No token provided");
@@ -80,8 +85,7 @@ export class UsersService {
             throw new BadRequestException("Username is already taken");
         }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await this.hashPassword(password);
 
         const newUser = this.usersRepository.create({
             username,
@@ -170,8 +174,7 @@ export class UsersService {
         user.username = body.username ?? user.username;
         user.email = body.email ?? user.email;
         if (body.password) {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(body.password, salt);
+            user.password = await this.hashPassword(body.password);
         }
         await this.usersRepository.save(user);
         return await this.getUserById(id);
