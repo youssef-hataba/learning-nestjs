@@ -22,9 +22,9 @@ export class Review {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @ManyToOne(() => Product, (product) => product.reviews, { onDelete: "CASCADE" })
+    @ManyToOne(() => Product, (product) => product.reviews, { onDelete: "CASCADE", nullable: false })
     product: Relation<Product>;
 
-    @ManyToOne(() => User, (user) => user.reviews, { onDelete: "CASCADE" })
+    @ManyToOne(() => User, (user) => user.reviews, { onDelete: "CASCADE", nullable: false })
     user: Relation<User>;
 }

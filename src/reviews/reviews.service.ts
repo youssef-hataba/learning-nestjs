@@ -4,12 +4,15 @@ import { Repository } from "typeorm";
 import { CreateReviewDto } from "./DTOs/create-review.dto.js";
 import { UpdateReviewDto } from "./DTOs/update-review.dto.js";
 import { Review } from "./review.entity.js";
+import { User } from "../users/user.entity.js";
+import { ProductsService } from "../products/products.service.js";
 
 @Injectable()
 export class ReviewsService {
     constructor(
         @InjectRepository(Review)
         private readonly reviewsRepository: Repository<Review>,
+        private readonly productsService: ProductsService,
     ) {}
 
     async getAllReviews(): Promise<Review[]> {
@@ -24,25 +27,27 @@ export class ReviewsService {
             relations: { product: true, user: true },
         });
         if (!review) {
-            throw new NotFoundException("Review not found");
+            throw new NotFoundException(`Review with ID "${id}" not found`);
         }
         return review;
     }
 
-    async createReview(body: CreateReviewDto): Promise<Review> {
+    async createReview(body: CreateReviewDto, userId: string): Promise<Review> {
+        // Validate that the product exists (throws NotFoundException if not found)
+        const product = await this.productsService.getProductById(body.productId);
+
         const newReview = this.reviewsRepository.create({
             rating: body.rating,
             comment: body.comment,
-            product: body.productId ? ({ id: body.productId } as any) : undefined,
-            user: body.userId ? ({ id: body.userId } as any) : undefined,
+            product,
+            user: { id: userId } as User,
         });
         return await this.reviewsRepository.save(newReview);
     }
 
     async updateReview(id: string, body: UpdateReviewDto): Promise<Review> {
         const review = await this.getReviewById(id);
-        review.rating = body.rating ?? review.rating;
-        review.comment = body.comment ?? review.comment;
+        Object.assign(review, body);
         return await this.reviewsRepository.save(review);
     }
 

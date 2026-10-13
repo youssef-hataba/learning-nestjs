@@ -592,11 +592,15 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Exceptional quality, super fast delivery! Highly recommended.\",\n  \"productId\": \"b1111111-1111-4111-8111-111111111111\",\n  \"userId\": \"a3333333-3333-4333-8333-333333333333\"\n}",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Exceptional quality, super fast delivery! Highly recommended.\",\n  \"productId\": \"b1111111-1111-4111-8111-111111111111\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -612,7 +616,7 @@
                 "reviews"
               ]
             },
-            "description": "### ✍️ Create Review\nAdds a new customer review.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/reviews`\n* **Body Validation:**\n  * `text`: String (3 - 200 chars, required)\n  * `rating`: Number (1 to 5, required)"
+            "description": "### ✍️ Create Review\nAdds a new customer review for a product. Authenticated user ID is automatically extracted from JWT token.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/reviews`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Any authenticated user (`@UseGuards(AuthGuard)`)\n* **Body Validation:**\n  * `rating`: Number (1 to 5, required)\n  * `comment`: String (3 - 300 chars, required)\n  * `productId`: UUID (required)"
           },
           "response": []
         },
