@@ -1,6 +1,7 @@
 import { SelectQueryBuilder } from "typeorm";
 import { Product } from "../product.entity.js";
-import { QueryProductsDto, ProductSortBy, SortOrder } from "../DTOs/query-products.dto.js";
+import { QueryProductsDto, ProductSortBy } from "../DTOs/query-products.dto.js";
+import { SortOrder } from "../../utils/enums.js";
 
 export const PRODUCT_SORT_FIELD_MAP: Record<ProductSortBy, string> = {
     [ProductSortBy.CREATED_AT]: "product.createdAt",

@@ -546,15 +546,73 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reviews",
+              "raw": "{{baseUrl}}/reviews?page=1&limit=10&sortBy=createdAt&sortOrder=DESC",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "reviews"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "quality",
+                  "description": "Search in review comment (case-insensitive)",
+                  "disabled": true
+                },
+                {
+                  "key": "rating",
+                  "value": "5",
+                  "description": "Filter by exact rating (1-5)",
+                  "disabled": true
+                },
+                {
+                  "key": "minRating",
+                  "value": "3",
+                  "description": "Filter by minimum rating (1-5)",
+                  "disabled": true
+                },
+                {
+                  "key": "maxRating",
+                  "value": "5",
+                  "description": "Filter by maximum rating (1-5)",
+                  "disabled": true
+                },
+                {
+                  "key": "productId",
+                  "value": "",
+                  "description": "Filter reviews for a specific product (UUID)",
+                  "disabled": true
+                },
+                {
+                  "key": "userId",
+                  "value": "",
+                  "description": "Filter reviews by a specific user (UUID)",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Sort field: createdAt | rating (default: createdAt)"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "DESC",
+                  "description": "Sort order: ASC | DESC (default: DESC)"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (min: 1, default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (min: 1, default: 10)"
+                }
               ]
             },
-            "description": "### ⭐ Get All Reviews\nFetches all customer reviews across the platform.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/reviews`"
+            "description": "### ⭐ Get All Reviews\nFetches paginated reviews with dynamic filtering and sorting.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/reviews`\n* **Query Parameters:**\n  * `search` (optional): Search within comments (ILIKE)\n  * `rating` (optional): Exact rating (1-5)\n  * `minRating` / `maxRating` (optional): Rating range\n  * `productId` (optional): Filter by product UUID\n  * `userId` (optional): Filter by author UUID\n  * `sortBy` (optional): `createdAt` | `rating` (default: `createdAt`)\n  * `sortOrder` (optional): `ASC` | `DESC` (default: `DESC`)\n  * `page` (optional): Page number (default: `1`)\n  * `limit` (optional): Items per page (default: `10`)\n* **Success Response:** `200 OK` (returns `{ data, meta }`)"
           },
           "response": []
         },
@@ -628,6 +686,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
             ],
             "body": {
@@ -656,7 +718,7 @@
                 }
               ]
             },
-            "description": "### 📝 Update Review\nModifies review content or rating.\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/reviews/:id`"
+            "description": "### 📝 Update Review (Owner Only)\nModifies review content or rating. Only the review creator is authorized (Admins cannot modify another user's review; they can only delete it).\n\n* **Method:** `PUT`\n* **URL:** `{{baseUrl}}/reviews/:id`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Review Creator only (`@UseGuards(AuthGuard)`)\n* **Throws:**\n  * `401 Unauthorized` if not logged in.\n  * `403 Forbidden` if caller is not the review creator.\n  * `404 Not Found` if review does not exist."
           },
           "response": []
         },
@@ -664,7 +726,12 @@
           "name": "🗑️ Delete Review",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/reviews/:id",
               "host": [
@@ -682,7 +749,7 @@
                 }
               ]
             },
-            "description": "### 🗑️ Delete Review\nRemoves a review from the system.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/reviews/:id`"
+            "description": "### 🗑️ Delete Review (Owner or Admin Only)\nRemoves a review from the system. Only the review creator or an Admin is authorized.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/reviews/:id`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Owner or Admin (`@UseGuards(AuthGuard)`)\n* **Throws:**\n  * `401 Unauthorized` if not logged in.\n  * `403 Forbidden` if caller is neither the owner nor an Admin.\n  * `404 Not Found` if review does not exist."
           },
           "response": []
         }

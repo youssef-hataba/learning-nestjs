@@ -1,5 +1,7 @@
 import { IsOptional, IsString, IsNumber, Min, IsEnum, IsUUID } from "class-validator";
 import { Type } from "class-transformer";
+import { SortOrder } from "../../utils/enums.js";
+import { PaginationDto } from "../../utils/pagination.dto.js";
 
 export enum ProductSortBy {
     CREATED_AT = "createdAt",
@@ -7,12 +9,7 @@ export enum ProductSortBy {
     TITLE = "title",
 }
 
-export enum SortOrder {
-    ASC = "ASC",
-    DESC = "DESC",
-}
-
-export class QueryProductsDto {
+export class QueryProductsDto extends PaginationDto {
     @IsOptional()
     @IsString()
     search?: string;
@@ -40,16 +37,5 @@ export class QueryProductsDto {
     @IsOptional()
     @IsEnum(SortOrder, { message: "sortOrder must be ASC or DESC" })
     sortOrder?: SortOrder = SortOrder.DESC;
-
-    @IsOptional()
-    @Type(() => Number)
-    @IsNumber({}, { message: "page must be a valid number" })
-    @Min(1, { message: "page must be at least 1" })
-    page?: number = 1;
-
-    @IsOptional()
-    @Type(() => Number)
-    @IsNumber({}, { message: "limit must be a valid number" })
-    @Min(1, { message: "limit must be at least 1" })
-    limit?: number = 10;
 }
+
