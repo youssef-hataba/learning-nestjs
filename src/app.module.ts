@@ -8,6 +8,7 @@ import { UsersModule } from "./users/users.module.js";
 import { ProductsModule } from "./products/products.module.js";
 import { ReviewsModule } from "./reviews/reviews.module.js";
 import { MailModule } from "./mail/mail.module.js";
+import { RedisModule } from "./redis/redis.module.js";
 import { AppController } from "./app.controller.js";
 
 @Module({
@@ -43,6 +44,7 @@ import { AppController } from "./app.controller.js";
         ProductsModule,
         ReviewsModule,
         MailModule,
+        RedisModule,
     ],
     controllers: [AppController],
 })

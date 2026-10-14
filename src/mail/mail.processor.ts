@@ -1,7 +1,13 @@
 import { Processor, WorkerHost, OnWorkerEvent } from "@nestjs/bullmq";
 import { Job } from "bullmq";
 import { Logger } from "@nestjs/common";
-import { MAIL_QUEUE, JOB_SEND_WELCOME_EMAIL, type SendWelcomeEmailJobData } from "./mail.constants.js";
+import {
+    MAIL_QUEUE,
+    JOB_SEND_WELCOME_EMAIL,
+    JOB_SEND_VERIFICATION_CODE,
+    type SendWelcomeEmailJobData,
+    type SendVerificationCodeJobData,
+} from "./mail.constants.js";
 import { MailService } from "./mail.service.js";
 
 @Processor(MAIL_QUEUE)
@@ -23,6 +29,12 @@ export class MailProcessor extends WorkerHost {
             case JOB_SEND_WELCOME_EMAIL: {
                 const data = job.data as SendWelcomeEmailJobData;
                 await this.mailService.sendWelcomeEmail(data.to, data.username);
+                return { delivered: true, to: data.to };
+            }
+
+            case JOB_SEND_VERIFICATION_CODE: {
+                const data = job.data as SendVerificationCodeJobData;
+                await this.mailService.sendVerificationCodeEmail(data.to, data.code);
                 return { delivered: true, to: data.to };
             }
 

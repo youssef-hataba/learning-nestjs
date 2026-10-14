@@ -1,15 +1,15 @@
-import { IsEmail, IsNotEmpty, IsString, Length } from "class-validator";
+import { IsNotEmpty, IsString, Length } from "class-validator";
 import { Match } from "../../utils/match.decorator.js";
 
 export class RegisterDto {
     @IsString()
+    @IsNotEmpty({ message: "Verification token is required" })
+    verificationToken: string;
+
+    @IsString()
     @IsNotEmpty({ message: "Username is required" })
     @Length(3, 30, { message: "Username must be between 3 and 30 characters long" })
     username: string;
-
-    @IsEmail({}, { message: "Invalid email address" })
-    @IsNotEmpty({ message: "Email is required" })
-    email: string;
 
     @IsString()
     @IsNotEmpty({ message: "Password is required" })

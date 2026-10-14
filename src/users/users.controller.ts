@@ -5,6 +5,8 @@ import { UsersService } from "./users.service.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
 import { RegisterDto } from "./DTOs/register.dto.js";
 import { LoginDto } from "./DTOs/login.dto.js";
+import { SendVerificationCodeDto } from "./DTOs/send-verification-code.dto.js";
+import { VerifyCodeDto } from "./DTOs/verify-code.dto.js";
 import { AuthGuard } from "./guards/auth.guard.js";
 import { RolesGuard } from "./guards/roles.guard.js";
 import { CurrentUser } from "./decorators/current-user.decorator.js";
@@ -76,6 +78,18 @@ export class UsersController {
     // ==========================================
     // 🔑 AUTHENTICATION
     // ==========================================
+    @Post("send-verification-code")
+    @HttpCode(HttpStatus.OK)
+    sendVerificationCode(@Body() body: SendVerificationCodeDto) {
+        return this.usersService.sendVerificationCode(body);
+    }
+
+    @Post("verify-code")
+    @HttpCode(HttpStatus.OK)
+    verifyCode(@Body() body: VerifyCodeDto) {
+        return this.usersService.verifyCode(body);
+    }
+
     @Post("register")
     register(@Body() body: RegisterDto) {
         return this.usersService.register(body);

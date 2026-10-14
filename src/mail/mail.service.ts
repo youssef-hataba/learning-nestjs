@@ -61,4 +61,8 @@ export class MailService {
     async sendWelcomeEmail(to: string, username: string): Promise<void> {
         await this.sendEmail(to, "Welcome to Our Platform! 🚀", "welcome", { username });
     }
+
+    async sendVerificationCodeEmail(to: string, code: string): Promise<void> {
+        await this.sendEmail(to, "Verify Your Email Address 🔐", "verify-email", { code });
+    }
 }

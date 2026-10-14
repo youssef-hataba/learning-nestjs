@@ -41,4 +41,29 @@ describe("UserRegisteredListener", () => {
             })
         );
     });
+
+    it("should enqueue a verification code email job with retry options when email.verification.code.send is emitted", async () => {
+        const payload = {
+            email: "verify@example.com",
+            code: "654321",
+        };
+
+        await listener.handleSendVerificationCodeEvent(payload);
+
+        expect(mockQueue.add).toHaveBeenCalledTimes(1);
+        expect(mockQueue.add).toHaveBeenCalledWith(
+            "send-verification-code",
+            {
+                to: "verify@example.com",
+                code: "654321",
+            },
+            expect.objectContaining({
+                attempts: 3,
+                backoff: expect.objectContaining({
+                    type: "exponential",
+                    delay: 3000,
+                }),
+            })
+        );
+    });
 });

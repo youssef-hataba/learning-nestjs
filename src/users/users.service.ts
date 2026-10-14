@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -10,7 +11,10 @@ import { User } from "./user.entity.js";
 import { JwtPayload } from "../utils/types.js";
 import { UserType } from "../utils/enums.js";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { EVENT_USER_REGISTERED } from "../mail/mail.constants.js";
+import { EVENT_USER_REGISTERED, EVENT_SEND_VERIFICATION_CODE } from "../mail/mail.constants.js";
+import { RedisService } from "../redis/redis.service.js";
+import { SendVerificationCodeDto } from "./DTOs/send-verification-code.dto.js";
+import { VerifyCodeDto } from "./DTOs/verify-code.dto.js";
 import * as fs from "fs";
 import * as path from "path";
 import { PROFILE_IMAGES_DIR } from "./helpers/profile-image-upload.helper.js";
@@ -22,6 +26,7 @@ export class UsersService {
         private readonly usersRepository: Repository<User>,
         private readonly jwtService: JwtService,
         private readonly eventEmitter: EventEmitter2,
+        private readonly redisService: RedisService,
     ) {}
 
     private generateJWT(payload: JwtPayload): string {
@@ -67,26 +72,86 @@ export class UsersService {
         return user;
     }
 
+    async sendVerificationCode(body: SendVerificationCodeDto): Promise<{ message: string }> {
+        const { email } = body;
+
+        const existingUser = await this.usersRepository.findOne({
+            where: { email },
+            withDeleted: true,
+        });
+
+        if (existingUser) {
+            throw new BadRequestException("A user with this email already exists");
+        }
+
+        // Generate 6-digit random code
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Store OTP in Redis for 10 minutes (600s)
+        await this.redisService.set(`email_verification_otp:${email}`, code, 600);
+
+        // Emit domain event to enqueue email dispatch in background
+        this.eventEmitter.emit(EVENT_SEND_VERIFICATION_CODE, {
+            email,
+            code,
+        });
+
+        return {
+            message: "Verification code sent successfully to your email. It expires in 10 minutes.",
+        };
+    }
+
+    async verifyCode(body: VerifyCodeDto): Promise<{ message: string; verificationToken: string }> {
+        const { email, code } = body;
+
+        const storedOtp = await this.redisService.get(`email_verification_otp:${email}`);
+        if (!storedOtp) {
+            throw new BadRequestException("Verification code has expired or was not requested");
+        }
+
+        if (storedOtp !== code) {
+            throw new BadRequestException("Invalid verification code");
+        }
+
+        // Delete the consumed OTP
+        await this.redisService.del(`email_verification_otp:${email}`);
+
+        // Generate single-use verification token valid for 15 minutes (900s)
+        const verificationToken = randomUUID();
+        await this.redisService.set(`verification_token:${verificationToken}`, email, 900);
+
+        return {
+            message: "Email verified successfully. You can now complete your registration.",
+            verificationToken,
+        };
+    }
+
     async register(body: RegisterDto): Promise<{ message: string; user: Partial<User>; token: string }> {
-        const { username, email, password, confirmPassword } = body;
+        const { username, verificationToken, password, confirmPassword } = body;
 
         if (password !== confirmPassword) {
             throw new BadRequestException("Password and confirmation password do not match");
         }
 
+        // Retrieve and validate the verified email linked to the verification token
+        const email = await this.redisService.get(`verification_token:${verificationToken}`);
+        if (!email) {
+            throw new BadRequestException(
+                "Invalid or expired verification token. Please verify your email again."
+            );
+        }
+
+        // Check username uniqueness (email is guaranteed unique & verified from step 1)
         const existingUser = await this.usersRepository.findOne({
-            where: [{ email }, { username }],
+            where: { username },
             withDeleted: true,
         });
 
         if (existingUser) {
             if (existingUser.deletedAt) {
                 throw new BadRequestException(
-                    "An account with this email/username was deleted. Please log in within 30 days of deletion to restore it."
+                    "An account with this username was deleted. Please log in within 30 days of deletion to restore it."
                 );
-            }
-            if (existingUser.email === email) {
-                throw new BadRequestException("A user with this email already exists");
             }
             throw new BadRequestException("Username is already taken");
         }
@@ -98,12 +163,17 @@ export class UsersService {
             email,
             password: hashedPassword,
             userType: UserType.USER,
+            isAccountVerified: true, // Automatically verified through pre-registration OTP!
         });
 
         const savedUser = await this.usersRepository.save(newUser);
+
+        // Consume and clean up the single-use verification token from Redis
+        await this.redisService.del(`verification_token:${verificationToken}`);
+
         const { password: _, ...userWithoutPassword } = savedUser;
 
-        //* Emit domain event for user registration (triggers decoupled queue processing)
+        //* Emit domain event for user registration (triggers decoupled queue processing for welcome email)
         this.eventEmitter.emit(EVENT_USER_REGISTERED, {
             userId: savedUser.id,
             email: savedUser.email,

@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9840d21-f09c-4b52-9dae-884849204cb3",
     "name": "🚀 Learning NestJS API",
-    "description": "# 🚀 Learning NestJS API Collection\n\nComprehensive API documentation and test suite for the **Learning NestJS** backend with **PostgreSQL** and **TypeORM**.\n\n---\n\n### ⚙️ Variables\n* `baseUrl`: `http://localhost:3000/api`\n\n### 📂 Modules\n1. **📦 Products:** Full CRUD connected to PostgreSQL via TypeORM.\n2. **👥 Users:** User management endpoints.\n3. **⭐ Reviews:** Product review endpoints.\n4. **🌐 System:** App health & welcome endpoint.",
+    "description": "# 🚀 Learning NestJS API Collection\n\nComprehensive API documentation and test suite for the **Learning NestJS** backend with **PostgreSQL** and **TypeORM**.\n\n---\n\n### ⚙️ Variables\n* `baseUrl`: `http://localhost:3000/api`\n\n### 📂 Modules\n1. **📦 Products:** Full CRUD connected to PostgreSQL via TypeORM.\n2. **👥 Users:** User management & authentication endpoints (with Pre-Registration OTP & Verification Tickets).\n3. **⭐ Reviews:** Product review endpoints.\n4. **🌐 System:** App health & welcome endpoint.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -326,7 +326,7 @@
       "description": "Endpoints for user authentication and management.",
       "item": [
         {
-          "name": "🔐 Register User",
+          "name": "📩 Send Verification Code (Pre-Registration Step 1)",
           "request": {
             "method": "POST",
             "header": [
@@ -337,7 +337,91 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"youssef_dev\",\n  \"email\": \"youssef@example.com\",\n  \"password\": \"Password123\",\n  \"confirmPassword\": \"Password123\"\n}",
+              "raw": "{\n  \"email\": \"youssef@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/send-verification-code",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "send-verification-code"
+              ]
+            },
+            "description": "### 📩 Send Verification Code (Pre-Registration Step 1)\nGenerates a 6-digit OTP code, saves it in Redis (TTL: 10 mins), and enqueues an email dispatch job via BullMQ.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/users/auth/send-verification-code`\n* **Body:**\n  * `email`: Valid email format (required)\n* **Throws:** `400 Bad Request` if email is already registered."
+          },
+          "response": []
+        },
+        {
+          "name": "✅ Verify OTP Code (Pre-Registration Step 2)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.verificationToken) {",
+                  "    pm.collectionVariables.set(\"verificationToken\", res.verificationToken);",
+                  "    pm.environment.set(\"verificationToken\", res.verificationToken);",
+                  "    console.log(\"Saved verificationToken:\", res.verificationToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"youssef@example.com\",\n  \"code\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/verify-code",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "verify-code"
+              ]
+            },
+            "description": "### ✅ Verify OTP Code (Pre-Registration Step 2)\nValidates the 6-digit OTP code against Redis, deletes the consumed OTP, and issues a single-use `verificationToken` valid for 15 minutes.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/users/auth/verify-code`\n* **Body:**\n  * `email`: Valid email format (required)\n  * `code`: Exactly 6 digits (required)\n* **Success Response:** `200 OK` returns `{ message, verificationToken }`\n* **Postman Test Script:** Automatically captures `verificationToken` into variables for Step 3."
+          },
+          "response": []
+        },
+        {
+          "name": "🔐 Register User (Pre-Registration Step 3)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verificationToken\": \"{{verificationToken}}\",\n  \"username\": \"youssef_dev\",\n  \"password\": \"Password123!\",\n  \"confirmPassword\": \"Password123!\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -355,7 +439,7 @@
                 "register"
               ]
             },
-            "description": "### 🔐 Register User\nRegisters a new user account with hashed password and confirms password match.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/users/auth/register`\n* **Body Validation:**\n  * `username`: String (3 - 30 chars, required)\n  * `email`: Valid email format (required)\n  * `password`: String (min 6 chars, required)\n  * `confirmPassword`: Must match password (required)"
+            "description": "### 🔐 Register User (Pre-Registration Step 3)\nRegisters a new user account with hashed password using the verified single-use `verificationToken`. The server extracts the verified email directly from Redis, preventing email resubmission.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/users/auth/register`\n* **Body Validation:**\n  * `verificationToken`: Single-use token from Step 2 (required)\n  * `username`: String (3 - 30 chars, required)\n  * `password`: String (min 6 chars, required)\n  * `confirmPassword`: Must match password (required)"
           },
           "response": []
         },
@@ -975,6 +1059,11 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "verificationToken",
+      "value": "",
       "type": "string"
     }
   ]
