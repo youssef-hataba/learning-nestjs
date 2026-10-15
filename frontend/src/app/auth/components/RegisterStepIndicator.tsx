@@ -5,77 +5,60 @@ import { useAuthStore } from '../store';
 export default function RegisterStepIndicator() {
   const { regStep } = useAuthStore();
 
+  const steps = [
+    { id: 'email', num: 1, label: 'Verify Email', desc: 'Email Verification' },
+    { id: 'otp', num: 2, label: '6-Digit Code', desc: 'OTP Verification' },
+    { id: 'details', num: 3, label: 'Complete Profile', desc: 'Profile Credentials' },
+  ];
+
+  const currentIdx = steps.findIndex((s) => s.id === regStep);
+
   return (
-    <div className="flex items-center justify-between mb-6 px-1">
-      <div className="flex items-center gap-2">
-        <span
-          className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center transition-colors ${
-            regStep === 'email'
-              ? 'bg-[#f5f0e6] text-[#0d0f11]'
-              : 'bg-[#21262d] text-emerald-400 border border-emerald-500/40'
-          }`}
-        >
-          {regStep !== 'email' ? '✓' : '1'}
-        </span>
-        <span
-          className={`text-[11px] ${
-            regStep === 'email' ? 'text-[#f5f0e6] font-medium' : 'text-[#736c62]'
-          }`}
-        >
-          Email
-        </span>
-      </div>
+    <div className="w-full mb-8">
+      <div className="flex items-center justify-between gap-2">
+        {steps.map((step, idx) => {
+          const isDone = idx < currentIdx;
+          const isCurrent = idx === currentIdx;
 
-      <div
-        className={`h-[1px] flex-1 mx-3 transition-colors ${
-          regStep === 'details' || regStep === 'otp' ? 'bg-[#323942]' : 'bg-[#21252b]'
-        }`}
-      />
+          return (
+            <div key={step.id} className="flex-1 flex items-center">
+              {/* Step Pill / Capsule */}
+              <div
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-xs ${
+                  isCurrent
+                    ? 'bg-[#b6f076] text-[#121812] font-bold shadow-[0_0_16px_rgba(182,240,118,0.35)]'
+                    : isDone
+                    ? 'bg-[#252c24] text-[#b6f076] border border-[#b6f076]/40 font-semibold'
+                    : 'bg-[#1a211a] text-[#c2c9b5]/40 border border-white/5 font-medium'
+                }`}
+              >
+                <span
+                  className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center ${
+                    isCurrent
+                      ? 'bg-[#121812] text-[#b6f076]'
+                      : isDone
+                      ? 'bg-[#b6f076] text-[#121812]'
+                      : 'bg-white/5 text-[#c2c9b5]/40'
+                  }`}
+                >
+                  {isDone ? '✓' : step.num}
+                </span>
+                <span className="hidden sm:inline whitespace-nowrap text-[11px]">
+                  {step.label}
+                </span>
+              </div>
 
-      <div className="flex items-center gap-2">
-        <span
-          className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center transition-colors ${
-            regStep === 'otp'
-              ? 'bg-[#f5f0e6] text-[#0d0f11]'
-              : regStep === 'details'
-              ? 'bg-[#21262d] text-emerald-400 border border-emerald-500/40'
-              : 'bg-[#181b1f] text-[#554f46]'
-          }`}
-        >
-          {regStep === 'details' ? '✓' : '2'}
-        </span>
-        <span
-          className={`text-[11px] ${
-            regStep === 'otp' ? 'text-[#f5f0e6] font-medium' : 'text-[#736c62]'
-          }`}
-        >
-          Verify OTP
-        </span>
-      </div>
-
-      <div
-        className={`h-[1px] flex-1 mx-3 transition-colors ${
-          regStep === 'details' ? 'bg-[#323942]' : 'bg-[#21252b]'
-        }`}
-      />
-
-      <div className="flex items-center gap-2">
-        <span
-          className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center transition-colors ${
-            regStep === 'details'
-              ? 'bg-[#f5f0e6] text-[#0d0f11]'
-              : 'bg-[#181b1f] text-[#554f46]'
-          }`}
-        >
-          3
-        </span>
-        <span
-          className={`text-[11px] ${
-            regStep === 'details' ? 'text-[#f5f0e6] font-medium' : 'text-[#736c62]'
-          }`}
-        >
-          Details
-        </span>
+              {/* Connector line */}
+              {idx < steps.length - 1 && (
+                <div
+                  className={`flex-1 h-[1px] mx-2 transition-colors ${
+                    idx < currentIdx ? 'bg-[#b6f076]/60' : 'bg-white/10'
+                  }`}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

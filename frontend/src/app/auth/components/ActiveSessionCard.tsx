@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { User } from '../types';
 import { logoutUser } from '../api';
 import { useAuthStore } from '../store';
+import { notify } from '@/lib/notifications';
 
 interface ActiveSessionCardProps {
   user: User;
@@ -11,36 +12,37 @@ interface ActiveSessionCardProps {
 }
 
 export default function ActiveSessionCard({ user, onSignOut }: ActiveSessionCardProps) {
-  const { setMessage } = useAuthStore();
+  const { openProfileModal } = useAuthStore();
 
   function handleLogout() {
     logoutUser();
     onSignOut();
-    setMessage({ text: 'You have been signed out.', type: 'info' });
+    notify.info('You have been signed out of Planto.', 'Session Ended');
   }
 
   return (
-    <div className="mb-6 rounded-lg border border-[#2a3038] bg-[#15191e] p-4 flex items-center justify-between">
+    <div className="mb-6 rounded-2xl border border-white/10 bg-[#252c24]/80 p-4 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="h-9 w-9 rounded-full bg-[#f5f0e6] text-[#0d0f11] font-bold text-xs flex items-center justify-center uppercase">
+        <div className="h-9 w-9 rounded-full bg-[#b6f076] text-[#121812] font-bold text-xs flex items-center justify-center uppercase shadow-sm">
           {user.username?.slice(0, 2) || 'U'}
         </div>
         <div>
-          <p className="text-xs font-semibold text-[#f5f0e6]">{user.username}</p>
-          <p className="text-[11px] text-[#878075]">{user.email}</p>
+          <p className="text-xs font-semibold text-[#f6ffe4]">{user.username}</p>
+          <p className="text-[11px] text-[#c2c9b5]/70">{user.email}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Link
-          href="/"
-          className="px-2.5 py-1 text-[11px] rounded bg-[#21262d] text-[#d8d0c2] hover:text-[#f5f0e6] hover:bg-[#2b313a] transition-colors"
+        <button
+          type="button"
+          onClick={openProfileModal}
+          className="px-3 py-1 text-[11px] rounded-full bg-[#b6f076]/15 border border-[#b6f076]/30 text-[#b6f076] hover:bg-[#b6f076]/25 transition-colors cursor-pointer"
         >
-          Store
-        </Link>
+          View Profile
+        </button>
         <button
           type="button"
           onClick={handleLogout}
-          className="px-2.5 py-1 text-[11px] rounded border border-rose-900/50 text-rose-300 hover:bg-rose-950/40 transition-colors cursor-pointer"
+          className="px-3 py-1 text-[11px] rounded-full border border-rose-800/40 text-rose-300 hover:bg-rose-950/40 transition-colors cursor-pointer"
         >
           Sign out
         </button>

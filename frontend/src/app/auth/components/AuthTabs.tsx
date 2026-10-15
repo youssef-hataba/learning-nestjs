@@ -7,20 +7,20 @@ export default function AuthTabs() {
   const { activeTab, setActiveTab } = useAuthStore();
 
   return (
-    <div className="flex border-b border-[#21252b] pb-3 mb-6 justify-between items-center">
+    <div className="flex border-b border-white/10 pb-3 mb-6 justify-between items-center">
       <div className="flex gap-6">
         <button
           type="button"
           onClick={() => setActiveTab('login')}
           className={`text-xs font-semibold pb-1 cursor-pointer transition-colors relative ${
             activeTab === 'login'
-              ? 'text-[#f5f0e6]'
-              : 'text-[#878075] hover:text-[#d8d0c2]'
+              ? 'text-[#f6ffe4]'
+              : 'text-[#c2c9b5]/60 hover:text-[#dde5d9]'
           }`}
         >
           Sign In
           {activeTab === 'login' && (
-            <span className="absolute bottom-[-13px] left-0 w-full h-[2px] bg-[#f5f0e6]" />
+            <span className="absolute bottom-[-13px] left-0 w-full h-[2px] bg-[#b6f076] shadow-[0_0_8px_rgba(182,240,118,0.5)]" />
           )}
         </button>
 
@@ -29,22 +29,22 @@ export default function AuthTabs() {
           onClick={() => setActiveTab('register')}
           className={`text-xs font-semibold pb-1 cursor-pointer transition-colors relative ${
             activeTab === 'register'
-              ? 'text-[#f5f0e6]'
-              : 'text-[#878075] hover:text-[#d8d0c2]'
+              ? 'text-[#f6ffe4]'
+              : 'text-[#c2c9b5]/60 hover:text-[#dde5d9]'
           }`}
         >
           Create Account
           {activeTab === 'register' && (
-            <span className="absolute bottom-[-13px] left-0 w-full h-[2px] bg-[#f5f0e6]" />
+            <span className="absolute bottom-[-13px] left-0 w-full h-[2px] bg-[#b6f076] shadow-[0_0_8px_rgba(182,240,118,0.5)]" />
           )}
         </button>
       </div>
 
       <Link
         href="/"
-        className="text-[11px] text-[#736c62] hover:text-[#f5f0e6] transition-colors flex items-center gap-1"
+        className="text-[11px] text-[#c2c9b5]/70 hover:text-[#b6f076] transition-colors flex items-center gap-1"
       >
-        ← Store
+        ← Back to Store
       </Link>
     </div>
   );

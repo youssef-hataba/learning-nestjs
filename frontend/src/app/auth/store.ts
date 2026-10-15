@@ -13,6 +13,8 @@ export interface AuthMessage {
 interface AuthState {
   activeTab: AuthTab;
   regStep: RegisterStep;
+  isAuthModalOpen: boolean;
+  isProfileModalOpen: boolean;
 
   email: string;
   password: string;
@@ -24,6 +26,11 @@ interface AuthState {
   resendCooldown: number;
   loading: boolean;
   message: AuthMessage | null;
+
+  openAuthModal: (tab?: AuthTab) => void;
+  closeAuthModal: () => void;
+  openProfileModal: () => void;
+  closeProfileModal: () => void;
 
   setActiveTab: (tab: AuthTab) => void;
   setRegStep: (step: RegisterStep) => void;
@@ -44,6 +51,8 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   activeTab: 'login',
   regStep: 'email',
+  isAuthModalOpen: false,
+  isProfileModalOpen: false,
 
   email: '',
   password: '',
@@ -55,6 +64,16 @@ export const useAuthStore = create<AuthState>((set) => ({
   resendCooldown: 0,
   loading: false,
   message: null,
+
+  openAuthModal: (tab) =>
+    set((state) => ({
+      isAuthModalOpen: true,
+      activeTab: tab || state.activeTab,
+      message: null,
+    })),
+  closeAuthModal: () => set({ isAuthModalOpen: false, message: null }),
+  openProfileModal: () => set({ isProfileModalOpen: true }),
+  closeProfileModal: () => set({ isProfileModalOpen: false }),
 
   setActiveTab: (tab) => set({ activeTab: tab, message: null }),
   setRegStep: (step) => set({ regStep: step }),
