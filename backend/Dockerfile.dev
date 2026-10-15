@@ -1,0 +1,18 @@
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Install all dependencies including devDependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy application source code
+COPY . .
+
+# Ensure uploads directory exists
+RUN mkdir -p /app/uploads
+
+EXPOSE 3000
+
+# Start NestJS in watch mode (Hot-reload)
+CMD ["npm", "run", "start:dev"]

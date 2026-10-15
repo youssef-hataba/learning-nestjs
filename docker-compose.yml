@@ -54,52 +54,7 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
-  # ----------------------------------------------------
-  # 4. NestJS Backend API
-  # ----------------------------------------------------
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: learning_nest_backend
-    restart: always
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./backend/.env
-    environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    volumes:
-      - backend_uploads:/app/uploads
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
-  # ----------------------------------------------------
-  # 5. Next.js Frontend
-  # ----------------------------------------------------
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        - NEXT_PUBLIC_API_URL=http://localhost:3000/api
-    container_name: learning_nest_frontend
-    restart: always
-    ports:
-      - "3001:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3000/api
-    depends_on:
-      - backend
-
 volumes:
   pgdata:
   redisdata:
   pgadmin_data:
-  backend_uploads:

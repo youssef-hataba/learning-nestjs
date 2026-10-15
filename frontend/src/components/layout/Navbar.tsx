@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useCurrentUserData } from '@/app/auth';
 
 export default function Navbar() {
   const [cartCount] = useState(2);
+  const { data: user } = useCurrentUserData();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#21252b] bg-[#0d0f11]/95 backdrop-blur-sm">
@@ -63,13 +65,25 @@ export default function Navbar() {
             <span className="text-[11px] font-medium text-[#f5f0e6]">{cartCount}</span>
           </button>
 
-          {/* Auth Action Button */}
-          <Link
-            href="/login"
-            className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#f5f0e6] text-[#0d0f11] hover:bg-[#e7ded1] transition-colors"
-          >
-            Sign in
-          </Link>
+          {/* Auth Action Button / User profile */}
+          {user ? (
+            <Link
+              href="/auth"
+              className="flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-medium bg-[#15191e] border border-[#2a3038] text-[#f5f0e6] hover:bg-[#1c2229] transition-colors"
+            >
+              <span className="w-5 h-5 rounded-full bg-[#f5f0e6] text-[#0d0f11] text-[10px] font-bold flex items-center justify-center uppercase">
+                {user.username?.slice(0, 1) || 'U'}
+              </span>
+              <span className="max-w-[80px] truncate">{user.username}</span>
+            </Link>
+          ) : (
+            <Link
+              href="/auth"
+              className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#f5f0e6] text-[#0d0f11] hover:bg-[#e7ded1] transition-colors"
+            >
+              Sign in
+            </Link>
+          )}
         </div>
       </div>
     </header>
