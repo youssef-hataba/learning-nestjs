@@ -1,7 +1,9 @@
 # compiled output
 /dist
-/node_modules
 /build
+.next/
+out/
+node_modules/
 
 # TypeScript build cache
 *.tsbuildinfo

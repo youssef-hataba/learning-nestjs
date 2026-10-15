@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0d0f11;
+  --foreground: #f5f2eb;
+  --surface: #14171a;
+  --surface-raised: #1c2024;
+  --border: #262a30;
+  --border-subtle: #1e2227;
+  --cream: #f5f0e6;
+  --cream-soft: #d8d0c2;
+  --cream-muted: #9e978c;
+  --cream-accent: #ede5d8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-cream: var(--cream);
+  --color-cream-soft: var(--cream-soft);
+  --color-cream-muted: var(--cream-muted);
+  --color-cream-accent: var(--cream-accent);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: -0.01em;
+  min-height: 100vh;
+}
+
+/* Subtle, clean scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0f11;
+}
+::-webkit-scrollbar-thumb {
+  background: #262a30;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f47;
+}

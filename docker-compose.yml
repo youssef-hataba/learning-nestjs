@@ -1,4 +1,7 @@
 services:
+  # ----------------------------------------------------
+  # 1. PostgreSQL Database
+  # ----------------------------------------------------
   postgres:
     image: postgres:16
     container_name: learning_nest_postgres
@@ -11,7 +14,15 @@ services:
       - "54320:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d learning_nest"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  # ----------------------------------------------------
+  # 2. Redis Cache & Queue
+  # ----------------------------------------------------
   redis:
     image: redis:7-alpine
     container_name: learning_nest_redis
@@ -20,7 +31,15 @@ services:
       - "6379:6379"
     volumes:
       - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  # ----------------------------------------------------
+  # 3. PgAdmin (Database Management UI)
+  # ----------------------------------------------------
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: learning_nest_pgadmin
@@ -35,7 +54,52 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
+  # ----------------------------------------------------
+  # 4. NestJS Backend API
+  # ----------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: learning_nest_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - backend_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ----------------------------------------------------
+  # 5. Next.js Frontend
+  # ----------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:3000/api
+    container_name: learning_nest_frontend
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3000/api
+    depends_on:
+      - backend
+
 volumes:
   pgdata:
   redisdata:
   pgadmin_data:
+  backend_uploads:
