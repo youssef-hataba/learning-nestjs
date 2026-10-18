@@ -17,8 +17,11 @@ export class User {
     @Column({ unique: true })
     email: string;
 
-    @Column({ select: false })
-    password: string;
+    @Column({ select: false, type: "varchar", nullable: true, default: null })
+    password: string | null;
+
+    @Column({ nullable: true, unique: true, type: "varchar", default: null })
+    googleId: string | null;
 
     @Column({
         type: "enum",

@@ -16,6 +16,7 @@ let User = class User {
     username;
     email;
     password;
+    googleId;
     userType;
     isAccountVerified;
     profileImage;
@@ -39,9 +40,13 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    Column({ select: false }),
-    __metadata("design:type", String)
+    Column({ select: false, type: "varchar", nullable: true, default: null }),
+    __metadata("design:type", Object)
 ], User.prototype, "password", void 0);
+__decorate([
+    Column({ nullable: true, unique: true, type: "varchar", default: null }),
+    __metadata("design:type", Object)
+], User.prototype, "googleId", void 0);
 __decorate([
     Column({
         type: "enum",

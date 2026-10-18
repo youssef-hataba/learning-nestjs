@@ -1,5 +1,6 @@
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
 import { RegisterDto } from "./DTOs/register.dto.js";
 import { LoginDto } from "./DTOs/login.dto.js";
@@ -13,7 +14,8 @@ export declare class UsersService {
     private readonly jwtService;
     private readonly eventEmitter;
     private readonly redisService;
-    constructor(usersRepository: Repository<User>, jwtService: JwtService, eventEmitter: EventEmitter2, redisService: RedisService);
+    private readonly configService;
+    constructor(usersRepository: Repository<User>, jwtService: JwtService, eventEmitter: EventEmitter2, redisService: RedisService, configService: ConfigService);
     private generateJWT;
     private hashPassword;
     private verifyToken;
@@ -53,4 +55,7 @@ export declare class UsersService {
     }>;
     getProfileImagePath(userId: string): Promise<string>;
     private deleteImageFileFromDisk;
+    getGoogleAuthUrl(): string;
+    getFrontendUrl(): string;
+    handleGoogleCallback(code: string): Promise<string>;
 }

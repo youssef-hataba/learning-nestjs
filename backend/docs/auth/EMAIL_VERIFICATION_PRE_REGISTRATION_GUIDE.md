@@ -10,7 +10,7 @@ There are two primary architectural patterns for email verification:
 
 ### Why Pre-Registration Flow with Verification Tokens?
 - **Zero Database Pollution:** Prevents bots and malicious users from filling the PostgreSQL database with abandoned or unverified accounts.
-- **Superior User Experience (No Redundant Inputs):** The client enters their email once to verify it. Upon entering the correct OTP, the server returns a `verificationToken`. The client never has to re-type or resend their email during the registration step.
+- **Superior User Experience (No Redundant Inputs):** The client enters their email once to verify it. Upon entering the correct OTP, the server returns a `verificationToken`. The client never has to re-type or resend heir email during the registration step.
 - **Anti-Tampering Security:** Eliminates email spoofing/tampering between steps (e.g. verifying `alice@example.com` but submitting `bob@example.com` in registration). The server resolves the email directly from the server-side Redis token.
 - **Optimized Database Queries:** In the registration step, the database query only needs to verify username uniqueness (`where: { username }`), eliminating redundant email queries.
 - **Temporary State Offloaded to Redis:** Ephemeral verification state and short-lived OTP tokens live in fast in-memory Redis keys with automatic expiration (TTL), removing the need for manual DB cleanup tables.

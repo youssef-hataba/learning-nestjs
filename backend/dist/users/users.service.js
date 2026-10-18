@@ -16,6 +16,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import bcrypt from "bcryptjs";
+import { ConfigService } from "@nestjs/config";
 import { User } from "./user.entity.js";
 import { UserType } from "../utils/enums.js";
 import { EventEmitter2 } from "@nestjs/event-emitter";
@@ -29,11 +30,13 @@ let UsersService = class UsersService {
     jwtService;
     eventEmitter;
     redisService;
-    constructor(usersRepository, jwtService, eventEmitter, redisService) {
+    configService;
+    constructor(usersRepository, jwtService, eventEmitter, redisService, configService) {
         this.usersRepository = usersRepository;
         this.jwtService = jwtService;
         this.eventEmitter = eventEmitter;
         this.redisService = redisService;
+        this.configService = configService;
     }
     generateJWT(payload) {
         return this.jwtService.sign(payload);
@@ -167,6 +170,9 @@ let UsersService = class UsersService {
         if (!user) {
             throw new BadRequestException("Invalid email or password");
         }
+        if (!user.password) {
+            throw new BadRequestException("This account was registered using Google. Please click 'Continue with Google' to sign in.");
+        }
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             throw new BadRequestException("Invalid email or password");
@@ -277,6 +283,122 @@ let UsersService = class UsersService {
             console.error(`Failed to delete profile image "${filename}" from disk:`, error);
         }
     }
+    getGoogleAuthUrl() {
+        const clientId = this.configService.get("GOOGLE_CLIENT_ID");
+        const redirectUri = this.configService.get("GOOGLE_CALLBACK_URL", "http://localhost:3000/api/users/auth/google/callback");
+        if (!clientId) {
+            throw new BadRequestException("GOOGLE_CLIENT_ID is not configured.");
+        }
+        const params = new URLSearchParams({
+            client_id: clientId,
+            redirect_uri: redirectUri,
+            response_type: "code",
+            scope: "openid profile email",
+            access_type: "offline",
+            prompt: "consent",
+        });
+        return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+    }
+    getFrontendUrl() {
+        return this.configService.get("FRONTEND_URL", "http://localhost:3001");
+    }
+    async handleGoogleCallback(code) {
+        const clientId = this.configService.get("GOOGLE_CLIENT_ID");
+        const clientSecret = this.configService.get("GOOGLE_CLIENT_SECRET");
+        const redirectUri = this.configService.get("GOOGLE_CALLBACK_URL", "http://localhost:3000/api/users/auth/google/callback");
+        const frontendUrl = this.getFrontendUrl();
+        if (!clientId || !clientSecret) {
+            throw new BadRequestException("Google OAuth credentials are not configured.");
+        }
+        const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                code,
+                client_id: clientId,
+                client_secret: clientSecret,
+                redirect_uri: redirectUri,
+                grant_type: "authorization_code",
+            }),
+        });
+        if (!tokenResponse.ok) {
+            const errorDetails = await tokenResponse.text();
+            throw new BadRequestException(`Google code exchange failed: ${errorDetails}`);
+        }
+        const tokenData = (await tokenResponse.json());
+        const accessToken = tokenData.access_token;
+        const userInfoResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!userInfoResponse.ok) {
+            throw new BadRequestException("Failed to fetch Google user profile");
+        }
+        const googleUser = (await userInfoResponse.json());
+        if (!googleUser.email) {
+            throw new BadRequestException("No email associated with this Google account");
+        }
+        let user = await this.usersRepository.findOne({
+            where: [{ googleId: googleUser.sub }, { email: googleUser.email }],
+            withDeleted: true,
+        });
+        if (user) {
+            if (user.deletedAt) {
+                await this.usersRepository.restore(user.id);
+                user.deletedAt = null;
+            }
+            let updated = false;
+            if (!user.googleId) {
+                user.googleId = googleUser.sub;
+                updated = true;
+            }
+            if (!user.isAccountVerified) {
+                user.isAccountVerified = true;
+                updated = true;
+            }
+            if (!user.profileImage && googleUser.picture) {
+                user.profileImage = googleUser.picture;
+                updated = true;
+            }
+            if (updated) {
+                user = await this.usersRepository.save(user);
+            }
+        }
+        else {
+            const rawName = (googleUser.name || googleUser.email.split("@")[0])
+                .toLowerCase()
+                .replace(/[^a-z0-9_]/g, "_")
+                .slice(0, 15);
+            const baseUsername = rawName.length >= 3 ? rawName : `user_${Math.floor(100 + Math.random() * 900)}`;
+            let username = baseUsername;
+            let counter = 1;
+            while (await this.usersRepository.findOne({ where: { username }, withDeleted: true })) {
+                username = `${baseUsername.slice(0, 10)}_${Math.floor(1000 + Math.random() * 9000)}`;
+                counter++;
+                if (counter > 15)
+                    break;
+            }
+            const newUser = this.usersRepository.create({
+                username,
+                email: googleUser.email,
+                googleId: googleUser.sub,
+                profileImage: googleUser.picture || null,
+                isAccountVerified: true,
+                userType: UserType.USER,
+                password: null,
+            });
+            user = await this.usersRepository.save(newUser);
+            this.eventEmitter.emit(EVENT_USER_REGISTERED, {
+                userId: user.id,
+                email: user.email,
+                username: user.username,
+            });
+        }
+        const token = this.generateJWT({
+            userId: user.id,
+            userType: user.userType,
+        });
+        return `${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}`;
+    }
 };
 UsersService = __decorate([
     Injectable(),
@@ -284,7 +406,8 @@ UsersService = __decorate([
     __metadata("design:paramtypes", [Repository,
         JwtService,
         EventEmitter2,
-        RedisService])
+        RedisService,
+        ConfigService])
 ], UsersService);
 export { UsersService };
 //# sourceMappingURL=users.service.js.map

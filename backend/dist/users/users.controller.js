@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Body, Controller, Get, Param, Post, Put, Delete, Patch, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards, UseInterceptors, UploadedFile, Res, BadRequestException } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Delete, Patch, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards, UseInterceptors, UploadedFile, Res, Query, BadRequestException } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { UsersService } from "./users.service.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
@@ -62,6 +62,23 @@ let UsersController = class UsersController {
     }
     login(body) {
         return this.usersService.login(body);
+    }
+    googleAuth(res) {
+        const url = this.usersService.getGoogleAuthUrl();
+        return res.redirect(url);
+    }
+    async googleAuthCallback(code, error, res) {
+        const frontendUrl = this.usersService.getFrontendUrl();
+        if (error || !code) {
+            return res.redirect(`${frontendUrl}/auth/callback?error=${encodeURIComponent(error || "no_code")}`);
+        }
+        try {
+            const redirectUrl = await this.usersService.handleGoogleCallback(code);
+            return res.redirect(redirectUrl);
+        }
+        catch (err) {
+            return res.redirect(`${frontendUrl}/auth/callback?error=${encodeURIComponent(err.message || "auth_failed")}`);
+        }
     }
     getAllUsers() {
         return this.usersService.getAllUsers();
@@ -162,6 +179,22 @@ __decorate([
     __metadata("design:paramtypes", [LoginDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "login", null);
+__decorate([
+    Get("google"),
+    __param(0, Res()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "googleAuth", null);
+__decorate([
+    Get("google/callback"),
+    __param(0, Query("code")),
+    __param(1, Query("error")),
+    __param(2, Res()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "googleAuthCallback", null);
 __decorate([
     Get(),
     Roles(UserType.ADMIN),

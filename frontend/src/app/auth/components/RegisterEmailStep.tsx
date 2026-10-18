@@ -43,10 +43,8 @@ export default function RegisterEmailStep() {
   }
 
   function handleGoogleAuth() {
-    notify.info(
-      'Google OAuth initialization in progress. Redirecting to Google security gateway...',
-      'Google Sanctuary Pass'
-    );
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+    window.location.href = `${backendUrl}/users/auth/google`;
   }
 
   const isValidEmail = email.includes('@') && email.includes('.');

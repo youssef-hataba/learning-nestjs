@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, Patch, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards, UseInterceptors, UploadedFile, Res, BadRequestException } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Delete, Patch, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards, UseInterceptors, UploadedFile, Res, Query, BadRequestException } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import type { Response } from "express";
 import { UsersService } from "./users.service.js";
@@ -99,6 +99,38 @@ export class UsersController {
     @HttpCode(HttpStatus.OK) // 200
     login(@Body() body: LoginDto) {
         return this.usersService.login(body);
+    }
+
+    // ==========================================
+    // 🌐 GOOGLE OAUTH 2.0
+    // ==========================================
+    @Get("google")
+    googleAuth(@Res() res: Response) {
+        const url = this.usersService.getGoogleAuthUrl();
+        return res.redirect(url);
+    }
+
+    @Get("google/callback")
+    async googleAuthCallback(
+        @Query("code") code: string,
+        @Query("error") error: string,
+        @Res() res: Response,
+    ) {
+        const frontendUrl = this.usersService.getFrontendUrl();
+        if (error || !code) {
+            return res.redirect(
+                `${frontendUrl}/auth/callback?error=${encodeURIComponent(error || "no_code")}`
+            );
+        }
+
+        try {
+            const redirectUrl = await this.usersService.handleGoogleCallback(code);
+            return res.redirect(redirectUrl);
+        } catch (err: any) {
+            return res.redirect(
+                `${frontendUrl}/auth/callback?error=${encodeURIComponent(err.message || "auth_failed")}`
+            );
+        }
     }
 
     // ==========================================

@@ -39,6 +39,8 @@ export declare class UsersController {
         user: Partial<import("./user.entity.js").User>;
         token: string;
     }>;
+    googleAuth(res: Response): void;
+    googleAuthCallback(code: string, error: string, res: Response): Promise<void>;
     getAllUsers(): Promise<import("./user.entity.js").User[]>;
     getUserById(id: string): Promise<import("./user.entity.js").User>;
     updateUserByAdmin(id: string, body: UpdateUserDto): Promise<import("./user.entity.js").User>;
