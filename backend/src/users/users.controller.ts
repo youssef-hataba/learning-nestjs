@@ -1,7 +1,10 @@
 import { Body, Controller, Get, Param, Post, Put, Delete, Patch, ParseUUIDPipe, HttpCode, HttpStatus, UseGuards, UseInterceptors, UploadedFile, Res, Query, BadRequestException } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import type { Response } from "express";
-import { UsersService } from "./users.service.js";
+import { UsersService } from "./services/users.service.js";
+import { AuthService } from "./services/auth.service.js";
+import { GoogleAuthService } from "./services/google-auth.service.js";
+import { ProfileImageService } from "./services/profile-image.service.js";
 import { UpdateUserDto } from "./DTOs/update-user.dto.js";
 import { RegisterDto } from "./DTOs/register.dto.js";
 import { LoginDto } from "./DTOs/login.dto.js";
@@ -17,7 +20,12 @@ import { profileImageUploadOptions } from "./helpers/profile-image-upload.helper
 
 @Controller("users/auth")
 export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(
+        private readonly usersService: UsersService,
+        private readonly authService: AuthService,
+        private readonly googleAuthService: GoogleAuthService,
+        private readonly profileImageService: ProfileImageService,
+    ) {}
 
     // ==========================================
     // 👤 CURRENT USER PROFILE (Self-Service)
@@ -56,7 +64,7 @@ export class UsersController {
         if (!file) {
             throw new BadRequestException("Profile image file is required");
         }
-        return this.usersService.setProfileImage(user.userId, file.filename);
+        return this.profileImageService.setProfileImage(user.userId, file.filename);
     }
 
     @Get("profile-image")
@@ -65,14 +73,14 @@ export class UsersController {
         @CurrentUser() user: JwtPayload,
         @Res() res: Response,
     ) {
-        const filePath = await this.usersService.getProfileImagePath(user.userId);
+        const filePath = await this.profileImageService.getProfileImagePath(user.userId);
         res.sendFile(filePath);
     }
 
     @Delete("profile-image")
     @UseGuards(AuthGuard)
     removeProfileImage(@CurrentUser() user: JwtPayload) {
-        return this.usersService.removeProfileImage(user.userId);
+        return this.profileImageService.removeProfileImage(user.userId);
     }
 
     // ==========================================
@@ -81,24 +89,24 @@ export class UsersController {
     @Post("send-verification-code")
     @HttpCode(HttpStatus.OK)
     sendVerificationCode(@Body() body: SendVerificationCodeDto) {
-        return this.usersService.sendVerificationCode(body);
+        return this.authService.sendVerificationCode(body);
     }
 
     @Post("verify-code")
     @HttpCode(HttpStatus.OK)
     verifyCode(@Body() body: VerifyCodeDto) {
-        return this.usersService.verifyCode(body);
+        return this.authService.verifyCode(body);
     }
 
     @Post("register")
     register(@Body() body: RegisterDto) {
-        return this.usersService.register(body);
+        return this.authService.register(body);
     }
 
     @Post("login") // 201
     @HttpCode(HttpStatus.OK) // 200
     login(@Body() body: LoginDto) {
-        return this.usersService.login(body);
+        return this.authService.login(body);
     }
 
     // ==========================================
@@ -106,7 +114,7 @@ export class UsersController {
     // ==========================================
     @Get("google")
     googleAuth(@Res() res: Response) {
-        const url = this.usersService.getGoogleAuthUrl();
+        const url = this.googleAuthService.getGoogleAuthUrl();
         return res.redirect(url);
     }
 
@@ -116,21 +124,8 @@ export class UsersController {
         @Query("error") error: string,
         @Res() res: Response,
     ) {
-        const frontendUrl = this.usersService.getFrontendUrl();
-        if (error || !code) {
-            return res.redirect(
-                `${frontendUrl}/auth/callback?error=${encodeURIComponent(error || "no_code")}`
-            );
-        }
-
-        try {
-            const redirectUrl = await this.usersService.handleGoogleCallback(code);
-            return res.redirect(redirectUrl);
-        } catch (err: any) {
-            return res.redirect(
-                `${frontendUrl}/auth/callback?error=${encodeURIComponent(err.message || "auth_failed")}`
-            );
-        }
+        const redirectUrl = await this.googleAuthService.handleGoogleCallback(code, error);
+        return res.redirect(redirectUrl);
     }
 
     // ==========================================

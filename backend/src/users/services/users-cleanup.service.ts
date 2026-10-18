@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { InjectRepository } from "@nestjs/typeorm";
 import { LessThan, Repository } from "typeorm";
-import { User } from "./user.entity.js";
+import { User } from "../user.entity.js";
 
 @Injectable()
 export class UsersCleanupService {
