@@ -5,105 +5,125 @@ import { useState, useEffect } from 'react';
 import { useCurrentUserData } from '@/app/auth';
 import { useAuthStore } from '@/app/auth/store';
 import BrandLogo from '@/components/ui/BrandLogo';
+import { BotanicalCartIcon, SproutSearchIcon } from '@/components/icons';
 
 export default function Navbar() {
   const [cartCount] = useState(2);
   const [mounted, setMounted] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
   const { data: user, isHydrated } = useCurrentUserData();
   const { openAuthModal, openProfileModal } = useAuthStore();
 
   useEffect(() => {
     setMounted(true);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#091009]/85 backdrop-blur-2xl border-b border-white/5 transition-all">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Chic Expressive Brand Logo */}
-        <BrandLogo size="md" showTagline={true} />
+  const handleSearchClick = () => {
+    const catalogElement = document.getElementById('catalog');
+    if (catalogElement) {
+      catalogElement.scrollIntoView({ behavior: 'smooth' });
+      // Focus on the catalog search input if present
+      const searchInput = catalogElement.querySelector('input');
+      if (searchInput) {
+        setTimeout(() => searchInput.focus(), 600);
+      }
+    }
+  };
 
-        {/* Floating Center Navigation Dock */}
-        <nav className="hidden lg:flex items-center gap-1 bg-[#1a211a]/70 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-md">
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        isScrolled
+          ? 'bg-white/85 backdrop-blur-md shadow-xs border-b border-[var(--border-glass)]'
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        
+        {/* Left Side: Navigation Links */}
+        <nav className="flex-1 hidden md:flex items-center gap-6 lg:gap-8">
           <Link
             href="/"
-            className="px-4 py-1.5 rounded-full bg-[#b6f076] text-[#121812] font-semibold text-xs tracking-wide transition-all shadow-[0_0_12px_rgba(182,240,118,0.25)]"
+            className="text-sm font-semibold text-[#203123] hover:text-[#4e7349] transition-colors relative py-1"
           >
             Home
           </Link>
           <Link
-            href="/#trending"
-            className="px-4 py-1.5 rounded-full text-[#c2c9b5] hover:text-[#f6ffe4] hover:bg-white/5 text-xs font-medium transition-colors"
+            href="/#catalog"
+            className="text-sm font-medium text-[#5e7362] hover:text-[#203123] transition-colors relative py-1"
           >
             Shop Plants
           </Link>
           <Link
             href="/#best-o2"
-            className="px-4 py-1.5 rounded-full text-[#c2c9b5] hover:text-[#f6ffe4] hover:bg-white/5 text-xs font-medium transition-colors"
+            className="text-sm font-medium text-[#5e7362] hover:text-[#203123] transition-colors relative py-1"
           >
-            Best O2 Plants
-          </Link>
-          <Link
-            href="/#top-selling"
-            className="px-4 py-1.5 rounded-full text-[#c2c9b5] hover:text-[#f6ffe4] hover:bg-white/5 text-xs font-medium transition-colors"
-          >
-            Top Selling
+            Best O2
           </Link>
           <Link
             href="/#reviews"
-            className="px-4 py-1.5 rounded-full text-[#c2c9b5] hover:text-[#f6ffe4] hover:bg-white/5 text-xs font-medium transition-colors"
+            className="text-sm font-medium text-[#5e7362] hover:text-[#203123] transition-colors relative py-1"
           >
             Reviews
           </Link>
         </nav>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-3">
-          {/* Cart preview */}
+        {/* Center: Brand Logo (Enlarged) */}
+        <div className="flex-shrink-0 flex items-center justify-center">
+          <BrandLogo size="lg" showTagline={false} />
+        </div>
+
+        {/* Right Side: Search, Cart, Profile (Exact match to reference) */}
+        <div className="flex-1 flex items-center justify-end gap-3 sm:gap-4">
+          {/* Search Icon Button */}
           <button
             type="button"
-            className="relative flex items-center justify-center w-10 h-10 rounded-full bg-[#1a211a] border border-white/10 text-[#dde5d9] hover:border-[#b6f076]/40 hover:text-[#f6ffe4] transition-colors cursor-pointer"
+            onClick={handleSearchClick}
+            className="flex items-center justify-center w-10 h-10 rounded-full text-[#203123] hover:text-[#4e7349] hover:bg-[#E9D5C9]/30 transition-all cursor-pointer group"
+            aria-label="Search nursery"
+            title="Search plants"
+          >
+            <SproutSearchIcon size={21} className="group-hover:scale-110 transition-transform" />
+          </button>
+
+          {/* Botanical Cart Icon Button with Count Badge */}
+          <button
+            type="button"
+            className="relative flex items-center justify-center w-10 h-10 rounded-full text-[#203123] hover:text-[#4e7349] hover:bg-[#E9D5C9]/30 transition-all cursor-pointer group"
             aria-label="Cart"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.8"
-                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-              />
-            </svg>
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#b6f076] text-[#121812] text-[10px] font-bold shadow-sm">
+            <BotanicalCartIcon size={22} className="group-hover:scale-110 transition-transform" />
+            <span className="absolute 1 top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#4e7349] text-white text-[10px] font-bold shadow-xs">
               {cartCount}
             </span>
           </button>
 
-          {/* User Sign In / Profile with Zero-Flicker Hydration State */}
+          {/* Profile Avatar / Sign In */}
           {!mounted || !isHydrated ? (
-            <div className="w-20 h-8 rounded-full bg-[#1a211a] border border-white/5 opacity-60 animate-pulse" />
+            <div className="w-9 h-9 rounded-full bg-[#E9D5C9]/40 border border-[#A8C3A0]/30 animate-pulse" />
           ) : user ? (
             <button
               type="button"
               onClick={openProfileModal}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1a211a] border border-[#b6f076]/40 text-[#f6ffe4] text-xs font-medium hover:border-[#b6f076] hover:bg-[#252c24] transition-all cursor-pointer shadow-sm"
-              title="View Sanctuary Profile"
+              className="relative flex items-center justify-center w-9 h-9 rounded-full bg-[#4e7349] text-white text-xs font-bold hover:shadow-md transition-all cursor-pointer border border-[#A8C3A0]/40 uppercase shadow-sm"
+              title={`Profile (${user.username})`}
             >
-              <span className="w-5 h-5 rounded-full bg-[#b6f076] text-[#121812] text-[10px] font-bold flex items-center justify-center uppercase">
-                {user.username?.slice(0, 1) || 'U'}
-              </span>
-              <span className="max-w-[85px] truncate">{user.username}</span>
+              {user.username?.slice(0, 1) || 'U'}
             </button>
           ) : (
             <button
               type="button"
               onClick={() => openAuthModal('login')}
-              className="px-4 py-2 rounded-full text-xs font-semibold bg-[#b6f076] text-[#121812] hover:bg-[#c7f88f] hover:shadow-[0_0_14px_rgba(182,240,118,0.35)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold bg-[#4e7349] text-white hover:bg-[#3d5c38] hover:shadow-md transition-all cursor-pointer"
             >
-              Sign In
+              <span>Sign In</span>
             </button>
           )}
         </div>

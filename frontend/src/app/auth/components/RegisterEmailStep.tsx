@@ -53,28 +53,28 @@ export default function RegisterEmailStep() {
     <div className="relative z-10 flex flex-col">
       {/* Header Content */}
       <div className="flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#252c24] text-[#b9f479] mb-3 shadow-sm border border-white/5">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eaf1e8] text-[#3c5a38] mb-3 shadow-xs border border-[#A8C3A0]/40">
           <span className="text-sm">🌱</span>
           <span className="text-[11px] font-semibold tracking-wider uppercase">
             Sanctuary Access Onboarding
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-[#f6ffe4] tracking-tight mb-2">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#203123] tracking-tight mb-2">
           Cultivate Your Sanctuary
         </h1>
 
-        <p className="text-xs sm:text-sm text-[#c2c9b5]/80 max-w-md mx-auto mb-6 leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#5e7362] max-w-sm mx-auto mb-5 leading-relaxed">
           Enter your primary email to receive an instant botanical access code before profile creation.
         </p>
       </div>
 
       {/* Google Authentication Button */}
-      <div className="w-full mb-5">
+      <div className="w-full mb-4">
         <button
           type="button"
           onClick={handleGoogleAuth}
-          className="w-full py-3 px-4 rounded-full border border-white/10 bg-[#0e150e]/90 hover:bg-[#1a211a] hover:border-white/20 text-[#f6ffe4] text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-3 shadow-sm cursor-pointer"
+          className="w-full py-2.5 px-4 rounded-full border border-[#A8C3A0]/40 bg-white hover:bg-[#f4f7f3] text-[#203123] text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-3 shadow-xs hover:shadow-md cursor-pointer"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -98,25 +98,25 @@ export default function RegisterEmailStep() {
         </button>
 
         <div className="relative flex items-center justify-center my-4">
-          <div className="border-t border-white/10 w-full" />
-          <span className="bg-[#161d16] px-3 text-[11px] text-[#c2c9b5]/60 absolute uppercase tracking-wider">
+          <div className="border-t border-[#A8C3A0]/30 w-full" />
+          <span className="bg-white px-3 text-[11px] text-[#5e7362] absolute uppercase tracking-wider font-medium">
             or continue with botanical email
           </span>
         </div>
       </div>
 
       {/* Email Form */}
-      <form onSubmit={handleSendOtp} className="flex flex-col gap-4">
+      <form onSubmit={handleSendOtp} className="flex flex-col gap-3.5">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold text-[#f6ffe4] flex items-center gap-1">
+            <label className="text-xs font-semibold text-[#203123] flex items-center gap-1">
               <span>Botanical Email Address</span>
-              <span className="text-[#b6f076] text-xs">*</span>
+              <span className="text-[#4e7349] text-xs">*</span>
             </label>
-            <span className="text-[11px] text-[#c2c9b5]/60 flex items-center gap-1.5">
+            <span className="text-[11px] text-[#5e7362] flex items-center gap-1.5">
               <span
                 className={`w-1.5 h-1.5 rounded-full ${
-                  isValidEmail ? 'bg-[#b6f076]' : 'bg-[#c2c9b5]/40'
+                  isValidEmail ? 'bg-[#4e7349]' : 'bg-[#8ca090]/40'
                 }`}
               />
               {isValidEmail ? 'Valid format' : 'Awaiting input'}
@@ -124,7 +124,7 @@ export default function RegisterEmailStep() {
           </div>
 
           <div className="relative group">
-            <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#c2c9b5]/50 group-focus-within:text-[#b6f076] transition-colors text-sm">
+            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8ca090] group-focus-within:text-[#4e7349] transition-colors text-sm">
               @
             </span>
             <input
@@ -134,10 +134,10 @@ export default function RegisterEmailStep() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="curator@sanctuary.com"
-              className="w-full pl-10 pr-10 py-3 bg-[#091009]/80 text-[#dde5d9] placeholder-[#c2c9b5]/30 text-sm rounded-2xl border border-white/10 outline-none shadow-inner transition-all duration-300 focus:bg-[#1a211a] focus:border-[#b6f076]/70 focus:shadow-[0_0_0_1px_rgba(182,240,118,0.3)]"
+              className="w-full pl-9 pr-10 py-2.5 bg-[#f8faf7] text-[#203123] placeholder-[#8ca090] text-xs sm:text-sm rounded-xl border border-[#A8C3A0]/40 outline-none transition-all duration-300 focus:bg-white focus:border-[#4e7349] focus:ring-2 focus:ring-[#4e7349]/20"
             />
             {isValidEmail && (
-              <span className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-[#b6f076] text-sm">
+              <span className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-[#4e7349] text-sm font-bold">
                 ✓
               </span>
             )}
@@ -148,11 +148,11 @@ export default function RegisterEmailStep() {
         <button
           type="submit"
           disabled={loading || !isValidEmail}
-          className="w-full mt-2 py-3.5 px-6 bg-[#b6f076] text-[#121812] text-xs sm:text-sm font-bold rounded-full shadow-md shadow-[#b6f076]/20 hover:bg-[#c7f88f] hover:shadow-[#b6f076]/30 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+          className="w-full mt-2 py-3 px-6 bg-[#4e7349] text-white text-xs sm:text-sm font-semibold rounded-full shadow-md shadow-[#4e7349]/20 hover:bg-[#3d5c38] hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
         >
           {loading ? (
             <>
-              <span className="w-4 h-4 border-2 border-[#121812] border-t-transparent rounded-full animate-spin" />
+              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               <span>Sending Verification Code...</span>
             </>
           ) : (
@@ -164,12 +164,12 @@ export default function RegisterEmailStep() {
         </button>
 
         {/* Technical Preview Info Pill from Stitch Design */}
-        <div className="w-full bg-[#252c24]/50 border border-white/5 rounded-xl p-2.5 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-xs text-[#c2c9b5]/70 mt-1">
+        <div className="w-full bg-[#f2f6f1] border border-[#A8C3A0]/30 rounded-xl p-2.5 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-xs text-[#5e7362] mt-1">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#b6f076] animate-pulse" />
-            <span className="text-[11px]">Redis-backed rate limiting &amp; instant delivery</span>
+            <span className="w-2 h-2 rounded-full bg-[#4e7349] animate-pulse" />
+            <span className="text-[11px]">Instant delivery &amp; encrypted token</span>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-[#c2c9b5]/50">
+          <div className="flex items-center gap-1 text-[11px] text-[#5e7362]/70">
             <span>⏱</span>
             <span>10-minute token window</span>
           </div>
@@ -177,13 +177,13 @@ export default function RegisterEmailStep() {
       </form>
 
       {/* Card Footer from Stitch Design */}
-      <div className="relative z-10 mt-6 pt-4 text-center bg-[#1a211a]/40 rounded-2xl p-3 border border-white/5">
-        <p className="text-xs text-[#c2c9b5]/70">
+      <div className="relative z-10 mt-5 pt-3 text-center bg-[#f2f6f1]/80 rounded-xl p-2.5 border border-[#A8C3A0]/30">
+        <p className="text-xs text-[#5e7362]">
           Already have a curated collection?{' '}
           <button
             type="button"
             onClick={() => setActiveTab('login')}
-            className="text-[#b6f076] hover:underline font-semibold ml-1 inline-flex items-center gap-0.5 cursor-pointer"
+            className="text-[#4e7349] hover:underline font-semibold ml-1 inline-flex items-center gap-0.5 cursor-pointer"
           >
             <span>Sign in here</span>
             <span className="text-xs leading-none">↗</span>

@@ -83,27 +83,27 @@ export default function RegisterDetailsStep({ onSuccess }: RegisterDetailsStepPr
     <div className="flex flex-col">
       {/* Title & Badge */}
       <div className="text-center mb-6">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#252c24] border border-[#b6f076]/30 text-[#b6f076] text-[11px] font-semibold uppercase tracking-wider mb-3">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eaf1e8] border border-[#A8C3A0]/40 text-[#3c5a38] text-[11px] font-semibold uppercase tracking-wider mb-3">
           🌱 Final Step: Profile Creation
         </span>
-        <h2 className="text-2xl sm:text-3xl font-bold text-[#f6ffe4] tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-[#203123] tracking-tight">
           Complete Your Profile
         </h2>
-        <p className="text-xs sm:text-sm text-[#c2c9b5]/80 mt-2 max-w-sm mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#5e7362] mt-2 max-w-sm mx-auto leading-relaxed">
           Your email has been verified. Choose a unique username and strong password.
         </p>
       </div>
 
-      <form onSubmit={handleCompleteRegistration} className="space-y-4">
+      <form onSubmit={handleCompleteRegistration} className="space-y-3.5">
         {/* Verified Email Chip */}
-        <div className="rounded-2xl bg-[#252c24] border border-[#b6f076]/30 px-4 py-3 flex items-center justify-between text-xs text-[#b6f076]">
+        <div className="rounded-xl bg-[#eaf1e8] border border-[#A8C3A0]/40 px-4 py-2.5 flex items-center justify-between text-xs text-[#203123]">
           <div className="flex items-center gap-2 overflow-hidden">
-            <span className="font-bold">✓</span>
-            <span className="text-[#c2c9b5]">
-              Verified Email: <strong className="font-mono text-[#f6ffe4]">{email}</strong>
+            <span className="font-bold text-[#4e7349]">✓</span>
+            <span className="text-[#5e7362]">
+              Verified Email: <strong className="font-mono text-[#203123]">{email}</strong>
             </span>
           </div>
-          <span className="text-[10px] uppercase font-semibold tracking-wider text-[#b6f076] bg-[#1a211a] px-2 py-0.5 rounded-full border border-[#b6f076]/30">
+          <span className="text-[10px] uppercase font-semibold tracking-wider text-[#3c5a38] bg-white px-2 py-0.5 rounded-full border border-[#A8C3A0]/40">
             Confirmed
           </span>
         </div>
@@ -111,13 +111,13 @@ export default function RegisterDetailsStep({ onSuccess }: RegisterDetailsStepPr
         {/* Username */}
         <div>
           <div className="flex justify-between items-center mb-1.5">
-            <label className="text-xs font-semibold text-[#f6ffe4]">
-              Sanctuary Username <span className="text-[#b6f076]">*</span>
+            <label className="text-xs font-semibold text-[#203123]">
+              Sanctuary Username <span className="text-[#4e7349]">*</span>
             </label>
-            <span className="text-[10px] text-[#c2c9b5]/60">3-30 characters</span>
+            <span className="text-[10px] text-[#8ca090]">3-30 characters</span>
           </div>
           <div className="relative">
-            <span className="absolute left-3.5 top-3 text-xs text-[#c2c9b5]/60">@</span>
+            <span className="absolute left-3.5 top-2.5 text-xs text-[#8ca090]">@</span>
             <input
               type="text"
               required
@@ -126,15 +126,15 @@ export default function RegisterDetailsStep({ onSuccess }: RegisterDetailsStepPr
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="botanical_curator"
-              className="w-full rounded-2xl border border-white/10 bg-[#0e150e]/90 pl-8 pr-4 py-2.5 text-xs text-[#dde5d9] placeholder-[#c2c9b5]/30 focus:border-[#b6f076] focus:outline-none transition-colors"
+              className="w-full rounded-xl border border-[#A8C3A0]/40 bg-[#f8faf7] pl-8 pr-4 py-2.5 text-xs text-[#203123] placeholder-[#8ca090] focus:border-[#4e7349] focus:bg-white focus:outline-none transition-colors"
             />
           </div>
         </div>
 
         {/* Password */}
         <div>
-          <label className="block text-xs font-semibold text-[#f6ffe4] mb-1.5">
-            Password <span className="text-[#b6f076]">*</span>
+          <label className="block text-xs font-semibold text-[#203123] mb-1.5">
+            Password <span className="text-[#4e7349]">*</span>
           </label>
           <input
             type="password"
@@ -143,18 +143,18 @@ export default function RegisterDetailsStep({ onSuccess }: RegisterDetailsStepPr
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="At least 6 characters"
-            className="w-full rounded-2xl border border-white/10 bg-[#0e150e]/90 px-4 py-2.5 text-xs text-[#dde5d9] placeholder-[#c2c9b5]/30 focus:border-[#b6f076] focus:outline-none transition-colors"
+            className="w-full rounded-xl border border-[#A8C3A0]/40 bg-[#f8faf7] px-4 py-2.5 text-xs text-[#203123] placeholder-[#8ca090] focus:border-[#4e7349] focus:bg-white focus:outline-none transition-colors"
           />
         </div>
 
         {/* Confirm Password */}
         <div>
           <div className="flex justify-between items-center mb-1.5">
-            <label className="text-xs font-semibold text-[#f6ffe4]">
-              Confirm Password <span className="text-[#b6f076]">*</span>
+            <label className="text-xs font-semibold text-[#203123]">
+              Confirm Password <span className="text-[#4e7349]">*</span>
             </label>
             {confirmPassword && (
-              <span className={`text-[10px] font-medium ${isPasswordMatch ? 'text-[#b6f076]' : 'text-rose-400'}`}>
+              <span className={`text-[10px] font-medium ${isPasswordMatch ? 'text-[#4e7349]' : 'text-rose-500'}`}>
                 {isPasswordMatch ? '✓ Passwords match' : '✕ Passwords mismatch'}
               </span>
             )}
@@ -165,10 +165,10 @@ export default function RegisterDetailsStep({ onSuccess }: RegisterDetailsStepPr
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Re-enter password"
-            className={`w-full rounded-2xl border bg-[#0e150e]/90 px-4 py-2.5 text-xs text-[#dde5d9] placeholder-[#c2c9b5]/30 focus:outline-none transition-colors ${
+            className={`w-full rounded-xl border bg-[#f8faf7] px-4 py-2.5 text-xs text-[#203123] placeholder-[#8ca090] focus:bg-white focus:outline-none transition-colors ${
               confirmPassword && !isPasswordMatch
-                ? 'border-rose-700 focus:border-rose-600'
-                : 'border-white/10 focus:border-[#b6f076]'
+                ? 'border-rose-400 focus:border-rose-500'
+                : 'border-[#A8C3A0]/40 focus:border-[#4e7349]'
             }`}
           />
         </div>
@@ -177,11 +177,11 @@ export default function RegisterDetailsStep({ onSuccess }: RegisterDetailsStepPr
         <button
           type="submit"
           disabled={loading || !username || !password || password !== confirmPassword}
-          className="w-full rounded-full bg-[#b6f076] py-3.5 text-xs sm:text-sm font-bold text-[#121812] hover:bg-[#c7f88f] hover:shadow-[0_0_24px_rgba(182,240,118,0.4)] transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2 mt-2"
+          className="w-full rounded-full bg-[#4e7349] py-3 text-xs sm:text-sm font-semibold text-white hover:bg-[#3d5c38] hover:shadow-lg transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2 mt-2 shadow-md shadow-[#4e7349]/20"
         >
           {loading ? (
             <>
-              <span className="w-4 h-4 rounded-full border-2 border-[#121812] border-t-transparent animate-spin" />
+              <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
               <span>Creating Account...</span>
             </>
           ) : (

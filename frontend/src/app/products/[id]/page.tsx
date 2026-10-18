@@ -96,9 +96,9 @@ export default function ProductDetailPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-36 flex flex-col items-center justify-center text-[#b6f076]">
+      <div className="min-h-screen pt-36 flex flex-col items-center justify-center text-[var(--accent-lime)]">
         <div className="w-12 h-12 border-3 border-current border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-sm font-medium text-[#c2c9b5]">Loading living botanical specimen...</p>
+        <p className="text-sm font-medium text-[var(--text-muted)]">Loading living botanical specimen...</p>
       </div>
     );
   }
@@ -106,16 +106,16 @@ export default function ProductDetailPage({
   if (!product) {
     return (
       <div className="min-h-screen pt-36 px-4 text-center max-w-xl mx-auto">
-        <div className="w-16 h-16 rounded-full bg-[#1a211a] border border-white/10 flex items-center justify-center text-3xl mx-auto mb-4">
+        <div className="w-16 h-16 rounded-full bg-[var(--surface-pill)] border border-[var(--border)] flex items-center justify-center text-3xl mx-auto mb-4 shadow-sm">
           🪴
         </div>
-        <h2 className="text-3xl font-bold text-[#f6ffe4] mb-3">Botanical Specimen Not Found</h2>
-        <p className="text-sm text-[#c2c9b5] mb-8 leading-relaxed">
+        <h2 className="text-3xl font-bold text-[var(--text-main)] mb-3">Botanical Specimen Not Found</h2>
+        <p className="text-sm text-[var(--text-muted)] mb-8 leading-relaxed">
           The requested plant is currently unavailable in our live nursery inventory or has completed its seasonal cycle.
         </p>
         <Link
           href="/"
-          className="px-8 py-3 rounded-full bg-[#b6f076] text-[#121812] font-bold text-xs tracking-wider uppercase hover:bg-[#c7f88f] transition-all shadow-[0_0_16px_rgba(182,240,118,0.3)]"
+          className="px-8 py-3 rounded-full bg-[var(--accent-lime)] text-[var(--on-primary)] font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-all shadow-md"
         >
           Return to Nursery Catalog
         </Link>
@@ -126,8 +126,8 @@ export default function ProductDetailPage({
   return (
     <div className="relative min-h-screen pt-24 pb-28 overflow-hidden">
       {/* Ambient Lighting Spheres */}
-      <div className="absolute top-20 left-10 w-[36rem] h-[36rem] bg-[#b6f076]/10 rounded-full blur-[160px] pointer-events-none" />
-      <div className="absolute top-96 right-10 w-[30rem] h-[30rem] bg-[#2e4732]/30 rounded-full blur-[170px] pointer-events-none" />
+      <div className="absolute top-20 left-10 w-[36rem] h-[36rem] bg-[var(--accent-lime)]/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-96 right-10 w-[30rem] h-[30rem] bg-[var(--accent-lime)]/5 rounded-full blur-[170px] pointer-events-none" />
 
       <ProductBreadcrumbs product={product} />
 

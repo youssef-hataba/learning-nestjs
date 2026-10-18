@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -24,8 +25,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${plusJakartaSans.variable} dark h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#0e150e] text-[#dde5d9] selection:bg-[#b6f076] selection:text-[#121812]">
+    <html lang="en" suppressHydrationWarning className={`${plusJakartaSans.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col bg-[var(--bg-app)] text-[var(--text-body)] selection:bg-[var(--accent-lime)] selection:text-[var(--on-primary)] transition-colors duration-300">
+        <Script
+          id="planto-theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('planto-theme');
+                  var theme = saved ? JSON.parse(saved).state?.theme : 'light';
+                  if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {
+                  document.documentElement.classList.remove('dark');
+                }
+              })();
+            `,
+          }}
+        />
         <ToastContainer />
         <AuthModal />
         <ProfileModal />

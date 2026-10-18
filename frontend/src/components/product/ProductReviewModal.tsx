@@ -26,25 +26,25 @@ export default function ProductReviewModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
-      <div className="w-full max-w-md rounded-3xl bg-[#141b14] border border-[#b6f076]/30 p-6 sm:p-8 shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+      <div className="w-full max-w-md rounded-3xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 shadow-2xl relative">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 text-[#c2c9b5] hover:text-white transition-colors text-lg cursor-pointer"
+          className="absolute top-5 right-5 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors text-lg cursor-pointer"
         >
           ✕
         </button>
 
-        <h3 className="text-xl font-bold text-[#f6ffe4] mb-1">Review {productTitle}</h3>
-        <p className="text-xs text-[#c2c9b5] mb-6">
+        <h3 className="text-xl font-bold text-[var(--text-main)] mb-1">Review {productTitle}</h3>
+        <p className="text-xs text-[var(--text-muted)] mb-6">
           Share how your plant adapted to its new home environment.
         </p>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
           {/* Star Rating Select */}
           <div>
-            <label className="text-xs font-semibold text-[#dde5d9] block mb-2">
+            <label className="text-xs font-semibold text-[var(--text-main)] block mb-2">
               Overall Rating
             </label>
             <div className="flex items-center gap-2">
@@ -54,19 +54,19 @@ export default function ProductReviewModal({
                   type="button"
                   onClick={() => onRatingChange(star)}
                   className={`text-2xl transition-transform hover:scale-110 cursor-pointer ${
-                    star <= rating ? 'text-[#9be650]' : 'text-gray-600'
+                    star <= rating ? 'text-amber-500' : 'text-gray-300 dark:text-gray-600'
                   }`}
                 >
                   ★
                 </button>
               ))}
-              <span className="text-xs text-[#b6f076] font-bold ml-2">{rating} / 5 Stars</span>
+              <span className="text-xs text-[var(--accent-lime)] font-bold ml-2">{rating} / 5 Stars</span>
             </div>
           </div>
 
           {/* Comment text */}
           <div>
-            <label className="text-xs font-semibold text-[#dde5d9] block mb-2">
+            <label className="text-xs font-semibold text-[var(--text-main)] block mb-2">
               Your Thoughts & Care Experience
             </label>
             <textarea
@@ -75,7 +75,7 @@ export default function ProductReviewModal({
               value={comment}
               onChange={(e) => onCommentChange(e.target.value)}
               placeholder="Tell other plant lovers about leaf health, packaging, light placement, or shipping condition..."
-              className="w-full rounded-2xl border border-white/10 bg-[#1a211a] p-3 text-xs text-[#dde5d9] placeholder-[#c2c9b5]/40 focus:border-[#b6f076]/60 focus:outline-none transition-colors"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-pill)] p-3 text-xs text-[var(--text-main)] placeholder-[var(--text-faint)] focus:border-[var(--accent-lime)] focus:outline-none transition-colors"
             />
           </div>
 
@@ -84,14 +84,14 @@ export default function ProductReviewModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-full border border-white/10 text-xs font-medium text-[#c2c9b5] hover:text-white transition-colors cursor-pointer"
+              className="flex-1 py-2.5 rounded-full border border-[var(--border)] text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 py-2.5 rounded-full bg-[#b6f076] text-[#121812] text-xs font-bold hover:bg-[#c7f88f] transition-all disabled:opacity-50 cursor-pointer"
+              className="flex-1 py-2.5 rounded-full bg-[var(--accent-lime)] text-[var(--on-primary)] text-xs font-bold hover:opacity-90 transition-all disabled:opacity-50 cursor-pointer shadow-sm"
             >
               {isSubmitting ? 'Publishing...' : 'Publish Review'}
             </button>

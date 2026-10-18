@@ -26,19 +26,19 @@ export default function RegisterStepIndicator() {
               <div
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-xs ${
                   isCurrent
-                    ? 'bg-[#b6f076] text-[#121812] font-bold shadow-[0_0_16px_rgba(182,240,118,0.35)]'
+                    ? 'bg-[#4e7349] text-white font-bold shadow-sm'
                     : isDone
-                    ? 'bg-[#252c24] text-[#b6f076] border border-[#b6f076]/40 font-semibold'
-                    : 'bg-[#1a211a] text-[#c2c9b5]/40 border border-white/5 font-medium'
+                    ? 'bg-[#eaf1e8] text-[#3c5a38] border border-[#A8C3A0]/60 font-semibold'
+                    : 'bg-[#f4f7f3] text-[#8ca090] border border-[#A8C3A0]/30 font-medium'
                 }`}
               >
                 <span
-                  className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center ${
+                  className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-bold ${
                     isCurrent
-                      ? 'bg-[#121812] text-[#b6f076]'
+                      ? 'bg-white text-[#4e7349]'
                       : isDone
-                      ? 'bg-[#b6f076] text-[#121812]'
-                      : 'bg-white/5 text-[#c2c9b5]/40'
+                      ? 'bg-[#4e7349] text-white'
+                      : 'bg-white/80 text-[#8ca090]'
                   }`}
                 >
                   {isDone ? '✓' : step.num}
@@ -51,8 +51,8 @@ export default function RegisterStepIndicator() {
               {/* Connector line */}
               {idx < steps.length - 1 && (
                 <div
-                  className={`flex-1 h-[1px] mx-2 transition-colors ${
-                    idx < currentIdx ? 'bg-[#b6f076]/60' : 'bg-white/10'
+                  className={`flex-1 h-[2px] mx-2 transition-colors ${
+                    idx < currentIdx ? 'bg-[#4e7349]' : 'bg-[#A8C3A0]/30'
                   }`}
                 />
               )}

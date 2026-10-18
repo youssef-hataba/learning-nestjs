@@ -12,7 +12,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const imageSrc =
     product.images && product.images.length > 0
       ? product.images[0]
-      : 'https://res.cloudinary.com/dmohzjxxd/image/upload/v1792335217/planto/products/monstera_deliciosa.jpg';
+      : 'https://res.cloudinary.com/dmohzjxxd/image/upload/v1792344863/planto/products/monstera_deliciosa_transparent.png';
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -31,19 +31,19 @@ export default function ProductCard({ product }: ProductCardProps) {
         <img
           src={imageSrc}
           alt={product.title}
-          className="max-h-full max-w-[88%] object-contain filter drop-shadow-[0_18px_32px_rgba(0,0,0,0.85)] group-hover:scale-105 transition-transform duration-300"
+          className="max-h-full max-w-[88%] object-contain rounded-xl filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.18)] group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
 
         {/* Pet Friendly Badge */}
         {product.isPetFriendly && (
-          <span className="absolute top-2 left-0 px-2 py-0.5 rounded-full bg-[#121812]/80 backdrop-blur-md border border-[#b6f076]/40 text-[10px] font-semibold text-[#b6f076] flex items-center gap-1">
+          <span className="absolute top-2 left-0 px-2.5 py-0.5 rounded-full bg-[var(--surface-pill)]/90 backdrop-blur-md border border-[var(--border)] text-[10px] font-semibold text-[var(--accent-lime)] flex items-center gap-1 shadow-sm">
             🐾 Pet Safe
           </span>
         )}
 
         {/* Stock Pill */}
-        <span className="absolute top-2 right-0 px-2 py-0.5 rounded-full bg-[#121812]/80 backdrop-blur-md border border-white/10 text-[10px] text-[#c2c9b5]/70">
+        <span className="absolute top-2 right-0 px-2.5 py-0.5 rounded-full bg-[var(--surface-pill)]/90 backdrop-blur-md border border-[var(--border)] text-[10px] text-[var(--text-muted)] shadow-sm">
           {product.stock} in stock
         </span>
       </div>
@@ -51,46 +51,46 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div>
         {/* Category & Care Level */}
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-[10px] font-semibold text-[#b6f076] uppercase tracking-wider">
+          <span className="text-[10px] font-semibold text-[var(--accent-lime)] uppercase tracking-wider">
             {product.category || 'Houseplants'}
           </span>
           {product.careLevel && (
-            <span className="text-[10px] text-[#c2c9b5]/60 border-l border-white/10 pl-2">
+            <span className="text-[10px] text-[var(--text-muted)] border-l border-[var(--border)] pl-2">
               Care: {product.careLevel}
             </span>
           )}
         </div>
 
-        <h3 className="text-lg font-bold text-[#f6ffe4] group-hover:text-white transition-colors">
+        <h3 className="text-lg font-bold text-[var(--text-main)] group-hover:text-[var(--accent-lime)] transition-colors">
           {product.title}
         </h3>
         {product.scientificName && (
-          <p className="text-xs italic text-[#c2c9b5]/60 mb-2">
+          <p className="text-xs italic text-[var(--text-muted)] mb-2">
             {product.scientificName}
           </p>
         )}
 
-        <p className="text-xs text-[#c2c9b5]/75 line-clamp-2 leading-relaxed mb-4">
+        <p className="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed mb-4">
           {product.description}
         </p>
       </div>
 
       {/* Card Footer: Price & Quick Bag Action */}
-      <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+      <div className="pt-4 border-t border-[var(--border)] flex items-center justify-between">
         <div>
-          <span className="text-[10px] text-[#c2c9b5]/60 uppercase tracking-wider block">Price</span>
-          <span className="text-lg font-extrabold text-[#b6f076]">${product.price}</span>
+          <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider block">Price</span>
+          <span className="text-lg font-extrabold text-[var(--accent-lime)]">${product.price}</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-[#b6f076] group-hover:underline mr-1">
+          <span className="text-xs font-semibold text-[var(--accent-lime)] group-hover:underline mr-1">
             Details &rarr;
           </span>
 
           <button
             type="button"
             onClick={handleQuickAdd}
-            className="w-9 h-9 rounded-full bg-[#1a211a] border border-white/10 hover:border-[#b6f076] hover:bg-[#b6f076] hover:text-[#121812] text-[#f6ffe4] flex items-center justify-center transition-all cursor-pointer shadow-sm"
+            className="w-9 h-9 rounded-full bg-[var(--surface-pill)] border border-[var(--border)] hover:border-[var(--accent-lime)] hover:bg-[var(--accent-lime)] hover:text-[var(--on-primary)] text-[var(--text-main)] flex items-center justify-center transition-all cursor-pointer shadow-sm"
             aria-label="Add to cart"
           >
             <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24">

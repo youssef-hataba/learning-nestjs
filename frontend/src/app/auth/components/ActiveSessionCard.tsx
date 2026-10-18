@@ -21,28 +21,28 @@ export default function ActiveSessionCard({ user, onSignOut }: ActiveSessionCard
   }
 
   return (
-    <div className="mb-6 rounded-2xl border border-white/10 bg-[#252c24]/80 p-4 flex items-center justify-between">
+    <div className="mb-6 rounded-2xl border border-[#A8C3A0]/40 bg-[#f8faf7] p-4 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="h-9 w-9 rounded-full bg-[#b6f076] text-[#121812] font-bold text-xs flex items-center justify-center uppercase shadow-sm">
+        <div className="h-9 w-9 rounded-full bg-[#4e7349] text-white font-bold text-xs flex items-center justify-center uppercase shadow-xs">
           {user.username?.slice(0, 2) || 'U'}
         </div>
         <div>
-          <p className="text-xs font-semibold text-[#f6ffe4]">{user.username}</p>
-          <p className="text-[11px] text-[#c2c9b5]/70">{user.email}</p>
+          <p className="text-xs font-semibold text-[#203123]">{user.username}</p>
+          <p className="text-[11px] text-[#5e7362]">{user.email}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={openProfileModal}
-          className="px-3 py-1 text-[11px] rounded-full bg-[#b6f076]/15 border border-[#b6f076]/30 text-[#b6f076] hover:bg-[#b6f076]/25 transition-colors cursor-pointer"
+          className="px-3 py-1 text-[11px] rounded-full bg-[#eaf1e8] border border-[#A8C3A0]/40 text-[#3c5a38] font-medium hover:bg-[#dce8da] transition-colors cursor-pointer"
         >
           View Profile
         </button>
         <button
           type="button"
           onClick={handleLogout}
-          className="px-3 py-1 text-[11px] rounded-full border border-rose-800/40 text-rose-300 hover:bg-rose-950/40 transition-colors cursor-pointer"
+          className="px-3 py-1 text-[11px] rounded-full border border-rose-300 text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
         >
           Sign out
         </button>

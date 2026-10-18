@@ -9,12 +9,12 @@ export default function BestO2Section({ tropicalPlant }: BestO2SectionProps) {
   const imageSrc =
     tropicalPlant?.images && tropicalPlant.images.length > 0
       ? tropicalPlant.images[0]
-      : 'https://res.cloudinary.com/dmohzjxxd/image/upload/v1792335228/planto/products/bird_of_paradise.jpg';
+      : 'https://res.cloudinary.com/dmohzjxxd/image/upload/v1792344965/planto/products/bird_of_paradise_transparent.png';
 
   return (
-    <section id="best-o2" className="mx-auto max-w-7xl px-4 py-16 pb-28 sm:px-6 lg:px-8">
-      <div className="glass-panel rounded-[36px] p-8 lg:p-14 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#b6f076]/10 rounded-full blur-[130px] pointer-events-none" />
+    <section id="best-o2" className="mx-auto max-w-7xl px-4 py-6 sm:py-8 sm:px-6 lg:px-8">
+      <div className="glass-panel rounded-[32px] p-6 sm:p-8 lg:p-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--accent-lime)]/10 rounded-full blur-[130px] pointer-events-none" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           {/* Visual */}
@@ -24,35 +24,35 @@ export default function BestO2Section({ tropicalPlant }: BestO2SectionProps) {
               <img
                 src={imageSrc}
                 alt="Bird of Paradise"
-                className="w-full h-full object-contain filter drop-shadow-[0_24px_36px_rgba(0,0,0,0.9)]"
+                className="w-full h-full object-contain rounded-2xl filter drop-shadow-[0_16px_32px_rgba(0,0,0,0.22)]"
               />
             </div>
           </div>
 
           {/* Content */}
           <div className="lg:col-span-7 flex flex-col gap-4">
-            <span className="text-xs uppercase tracking-widest text-[#b6f076] font-semibold">
-              ◄ Architectural Tropical Giant ►
+            <span className="text-xs uppercase tracking-widest text-[#4e7349] font-semibold">
+              Natural Oxygen & Wellness
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#f6ffe4] leading-tight">
-              White Bird of Paradise (Strelitzia nicolai)
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-main)] leading-tight">
+              White Bird of Paradise
             </h2>
-            <p className="text-xs sm:text-sm text-[#c2c9b5] leading-relaxed max-w-xl">
-              Broad architectural foliage engineered by nature for grand tropical statement spaces. Thrives in bright sunlit rooms and infuses indoor environments with luxurious botanical presence.
+            <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed max-w-lg">
+              Broad architectural foliage that naturally purifies air and brings timeless serene beauty into your home.
             </p>
 
             <div className="flex items-center gap-4 pt-4">
               {tropicalPlant && (
                 <Link
                   href={`/products/${tropicalPlant.id}`}
-                  className="px-6 py-2.5 rounded-full bg-[#b6f076] text-[#121812] text-xs font-semibold hover:bg-[#c7f88f] transition-all shadow-[0_0_16px_rgba(182,240,118,0.3)]"
+                  className="px-6 py-2.5 rounded-full bg-[var(--accent-lime)] text-[var(--on-primary)] text-xs font-semibold hover:opacity-90 transition-all shadow-md"
                 >
                   View Specimen Specs
                 </Link>
               )}
               <a
                 href="#top-selling"
-                className="px-6 py-2.5 rounded-full bg-[#1a211a] border border-white/10 text-[#f6ffe4] text-xs font-medium hover:border-[#b6f076]/40 transition-all"
+                className="px-6 py-2.5 rounded-full bg-[var(--surface-pill)] border border-[var(--border)] text-[var(--text-main)] text-xs font-medium hover:border-[var(--accent-lime)] transition-all shadow-sm"
               >
                 Browse All 10 Plants
               </a>

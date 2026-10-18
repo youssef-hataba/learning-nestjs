@@ -8,14 +8,14 @@ interface ProductBreadcrumbsProps {
 export default function ProductBreadcrumbs({ product }: ProductBreadcrumbsProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-8">
-      <div className="flex items-center gap-2 text-xs text-[#c2c9b5]/70">
-        <Link href="/" className="hover:text-[#b6f076] transition-colors">
+      <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+        <Link href="/" className="hover:text-[var(--accent-lime)] transition-colors">
           Nursery Catalog
         </Link>
         <span>/</span>
-        <span className="text-[#b6f076]">{product.category || 'Houseplants'}</span>
+        <span className="text-[var(--accent-lime)] font-medium">{product.category || 'Houseplants'}</span>
         <span>/</span>
-        <span className="text-[#f6ffe4] font-medium truncate">{product.title}</span>
+        <span className="text-[var(--text-main)] font-semibold truncate">{product.title}</span>
       </div>
     </div>
   );
