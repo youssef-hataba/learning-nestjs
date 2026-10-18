@@ -7,20 +7,32 @@ export const PRODUCT_SORT_FIELD_MAP: Record<ProductSortBy, string> = {
     [ProductSortBy.CREATED_AT]: "product.createdAt",
     [ProductSortBy.PRICE]: "product.price",
     [ProductSortBy.TITLE]: "product.title",
+    [ProductSortBy.STOCK]: "product.stock",
 };
 
 /**
- * Applies search, price range, and user filters to a Product query builder.
+ * Applies search, price range, user, and plant-specific filters to a Product query builder.
  */
 export function applyProductFilters(
     queryBuilder: SelectQueryBuilder<Product>,
     query: QueryProductsDto
 ): void {
-    const { search, minPrice, maxPrice, userId } = query;
+    const {
+        search,
+        minPrice,
+        maxPrice,
+        userId,
+        placement,
+        lightRequirement,
+        wateringFrequency,
+        careLevel,
+        isPetFriendly,
+        category,
+    } = query;
 
     if (search?.trim()) {
         queryBuilder.andWhere(
-            "(product.title ILIKE :search OR product.description ILIKE :search)",
+            "(product.title ILIKE :search OR product.description ILIKE :search OR product.scientificName ILIKE :search OR product.category ILIKE :search)",
             { search: `%${search.trim()}%` }
         );
     }
@@ -35,6 +47,30 @@ export function applyProductFilters(
 
     if (userId) {
         queryBuilder.andWhere("user.id = :userId", { userId });
+    }
+
+    if (placement) {
+        queryBuilder.andWhere("product.placement = :placement", { placement });
+    }
+
+    if (lightRequirement) {
+        queryBuilder.andWhere("product.lightRequirement = :lightRequirement", { lightRequirement });
+    }
+
+    if (wateringFrequency) {
+        queryBuilder.andWhere("product.wateringFrequency = :wateringFrequency", { wateringFrequency });
+    }
+
+    if (careLevel) {
+        queryBuilder.andWhere("product.careLevel = :careLevel", { careLevel });
+    }
+
+    if (isPetFriendly !== undefined) {
+        queryBuilder.andWhere("product.isPetFriendly = :isPetFriendly", { isPetFriendly });
+    }
+
+    if (category?.trim()) {
+        queryBuilder.andWhere("product.category ILIKE :category", { category: `%${category.trim()}%` });
     }
 }
 

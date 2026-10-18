@@ -11,7 +11,7 @@
       "description": "Endpoints for managing products stored in PostgreSQL database via TypeORM.",
       "item": [
         {
-          "name": "📦 Get All Products",
+          "name": "📦 Get All Plants (With Botanical Filters & Pagination)",
           "request": {
             "method": "GET",
             "header": [],
@@ -25,48 +25,78 @@
               ],
               "query": [
                 {
-                  "key": "search",
-                  "value": "laptop",
-                  "description": "Search term matched against product title and description (case-insensitive)",
-                  "disabled": true
-                },
-                {
-                  "key": "minPrice",
-                  "value": "100",
-                  "description": "Filter by minimum price",
-                  "disabled": true
-                },
-                {
-                  "key": "maxPrice",
-                  "value": "1500",
-                  "description": "Filter by maximum price",
-                  "disabled": true
-                },
-                {
-                  "key": "userId",
-                  "value": "",
-                  "description": "Filter products created by a specific user (UUID)",
-                  "disabled": true
-                },
-                {
-                  "key": "sortBy",
-                  "value": "createdAt",
-                  "description": "Sort field: createdAt | price | title (default: createdAt)"
-                },
-                {
-                  "key": "sortOrder",
-                  "value": "DESC",
-                  "description": "Sort order: ASC | DESC (default: DESC)"
-                },
-                {
                   "key": "page",
                   "value": "1",
-                  "description": "Page number (min: 1, default: 1)"
+                  "description": "Page number"
                 },
                 {
                   "key": "limit",
                   "value": "10",
-                  "description": "Items per page (min: 1, default: 10)"
+                  "description": "Items per page"
+                },
+                {
+                  "key": "search",
+                  "value": "Monstera",
+                  "disabled": true,
+                  "description": "Search title, description, scientific name, or category"
+                },
+                {
+                  "key": "placement",
+                  "value": "INDOOR",
+                  "disabled": true,
+                  "description": "INDOOR, OUTDOOR, or BOTH"
+                },
+                {
+                  "key": "lightRequirement",
+                  "value": "INDIRECT_BRIGHT",
+                  "disabled": true,
+                  "description": "LOW_LIGHT, INDIRECT_BRIGHT, or DIRECT_SUN"
+                },
+                {
+                  "key": "wateringFrequency",
+                  "value": "MODERATE",
+                  "disabled": true,
+                  "description": "LOW, MODERATE, or HIGH"
+                },
+                {
+                  "key": "careLevel",
+                  "value": "EASY",
+                  "disabled": true,
+                  "description": "EASY, MODERATE, or EXPERT"
+                },
+                {
+                  "key": "isPetFriendly",
+                  "value": "true",
+                  "disabled": true,
+                  "description": "Filter pet-friendly plants (true/false)"
+                },
+                {
+                  "key": "category",
+                  "value": "Houseplants",
+                  "disabled": true,
+                  "description": "Filter by plant category"
+                },
+                {
+                  "key": "minPrice",
+                  "value": "10",
+                  "disabled": true,
+                  "description": "Minimum price filter"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "200",
+                  "disabled": true,
+                  "description": "Maximum price filter"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "createdAt, price, title, stock"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "DESC",
+                  "description": "ASC or DESC"
                 }
               ]
             },
@@ -101,7 +131,7 @@
           "response": []
         },
         {
-          "name": "✨ Create Product (Admin Only)",
+          "name": "🌱 Create Plant / Product (Admin Only)",
           "request": {
             "method": "POST",
             "header": [
@@ -116,7 +146,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Gaming Keyboard RGB\",\n  \"description\": \"Mechanical gaming keyboard with high-precision blue switches and RGB illumination.\",\n  \"price\": 120\n}",
+              "raw": "{\n  \"title\": \"Monstera Deliciosa\",\n  \"scientificName\": \"Monstera deliciosa\",\n  \"description\": \"Popular tropical houseplant known for its natural leaf fenestrations. Easy to care for and fast growing.\",\n  \"price\": 45,\n  \"stock\": 15,\n  \"placement\": \"INDOOR\",\n  \"lightRequirement\": \"INDIRECT_BRIGHT\",\n  \"wateringFrequency\": \"MODERATE\",\n  \"careLevel\": \"EASY\",\n  \"isPetFriendly\": false,\n  \"humidity\": \"60-80%\",\n  \"potSize\": \"15cm\",\n  \"category\": \"Houseplants\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -132,12 +162,12 @@
                 "products"
               ]
             },
-            "description": "### ✨ Create Product (Admin Only)\nCreates a new product record in PostgreSQL linked to the authenticated Admin user.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/products`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Body Validation:**\n  * `title`: String (3 - 30 chars, required)\n  * `description`: String (5 - 500 chars, required)\n  * `price`: Number (>= 0, required)\n* **Throws:**\n  * `401 Unauthorized` if token is missing or invalid.\n  * `403 Forbidden` if caller is not an Admin."
+            "description": "### 🌱 Create Plant Product (Admin Only)\nCreates a new plant with botanical details, care requirements, stock, and placement settings.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/products`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)"
           },
           "response": []
         },
         {
-          "name": "✏️ Update Product (Admin Only)",
+          "name": "✏️ Update Plant / Product (Admin Only)",
           "request": {
             "method": "PUT",
             "header": [
@@ -152,7 +182,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Gaming Keyboard RGB Pro\",\n  \"description\": \"Upgraded mechanical gaming keyboard with silent tactile switches.\",\n  \"price\": 145\n}",
+              "raw": "{\n  \"price\": 50,\n  \"stock\": 12,\n  \"careLevel\": \"EASY\",\n  \"potSize\": \"17cm\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
