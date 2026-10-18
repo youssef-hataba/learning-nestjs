@@ -53,19 +53,19 @@ export default function RegisterEmailStep() {
     <div className="relative z-10 flex flex-col">
       {/* Header Content */}
       <div className="flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eaf1e8] text-[#3c5a38] mb-3 shadow-xs border border-[#A8C3A0]/40">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1b2f1f] text-[#a8c3a0] mb-3 shadow-xs border border-[#4e7349]/40">
           <span className="text-sm">🌱</span>
           <span className="text-[11px] font-semibold tracking-wider uppercase">
-            Sanctuary Access Onboarding
+            Create Account
           </span>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#203123] tracking-tight mb-2">
-          Cultivate Your Sanctuary
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#f5f1e8] tracking-tight mb-2">
+          Create an Account
         </h1>
 
-        <p className="text-xs sm:text-sm text-[#5e7362] max-w-sm mx-auto mb-5 leading-relaxed">
-          Enter your primary email to receive an instant botanical access code before profile creation.
+        <p className="text-xs sm:text-sm text-[#b2c7b5] max-w-sm mx-auto mb-5 leading-relaxed">
+          Enter your email to receive a 6-digit verification code.
         </p>
       </div>
 
@@ -74,7 +74,7 @@ export default function RegisterEmailStep() {
         <button
           type="button"
           onClick={handleGoogleAuth}
-          className="w-full py-2.5 px-4 rounded-full border border-[#A8C3A0]/40 bg-white hover:bg-[#f4f7f3] text-[#203123] text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-3 shadow-xs hover:shadow-md cursor-pointer"
+          className="w-full py-2.5 px-4 rounded-full border border-[#4e7349]/40 bg-[#1c3020]/90 hover:bg-[#25402a] text-[#f5f1e8] text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-3 shadow-xs hover:shadow-md cursor-pointer"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -98,9 +98,9 @@ export default function RegisterEmailStep() {
         </button>
 
         <div className="relative flex items-center justify-center my-4">
-          <div className="border-t border-[#A8C3A0]/30 w-full" />
-          <span className="bg-white px-3 text-[11px] text-[#5e7362] absolute uppercase tracking-wider font-medium">
-            or continue with botanical email
+          <div className="border-t border-[#3d5a3c]/60 w-full" />
+          <span className="bg-[#142417] px-3 text-[11px] text-[#8ca090] absolute uppercase tracking-wider font-medium">
+            or continue with email
           </span>
         </div>
       </div>
@@ -109,14 +109,14 @@ export default function RegisterEmailStep() {
       <form onSubmit={handleSendOtp} className="flex flex-col gap-3.5">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold text-[#203123] flex items-center gap-1">
-              <span>Botanical Email Address</span>
-              <span className="text-[#4e7349] text-xs">*</span>
+            <label className="text-xs font-semibold text-[#e3ebe0] flex items-center gap-1">
+              <span>Email Address</span>
+              <span className="text-[#a8c3a0] text-xs">*</span>
             </label>
-            <span className="text-[11px] text-[#5e7362] flex items-center gap-1.5">
+            <span className="text-[11px] text-[#8ca090] flex items-center gap-1.5">
               <span
                 className={`w-1.5 h-1.5 rounded-full ${
-                  isValidEmail ? 'bg-[#4e7349]' : 'bg-[#8ca090]/40'
+                  isValidEmail ? 'bg-[#6c9966]' : 'bg-[#6f8873]/50'
                 }`}
               />
               {isValidEmail ? 'Valid format' : 'Awaiting input'}
@@ -124,7 +124,7 @@ export default function RegisterEmailStep() {
           </div>
 
           <div className="relative group">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8ca090] group-focus-within:text-[#4e7349] transition-colors text-sm">
+            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6f8873] group-focus-within:text-[#a8c3a0] transition-colors text-sm">
               @
             </span>
             <input
@@ -133,11 +133,11 @@ export default function RegisterEmailStep() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="curator@sanctuary.com"
-              className="w-full pl-9 pr-10 py-2.5 bg-[#f8faf7] text-[#203123] placeholder-[#8ca090] text-xs sm:text-sm rounded-xl border border-[#A8C3A0]/40 outline-none transition-all duration-300 focus:bg-white focus:border-[#4e7349] focus:ring-2 focus:ring-[#4e7349]/20"
+              placeholder="name@example.com"
+              className="w-full pl-9 pr-10 py-2.5 bg-[#0f1b11] text-[#f5f1e8] placeholder-[#6f8873] text-xs sm:text-sm rounded-xl border border-[#3d5a3c] outline-none transition-all duration-300 focus:bg-[#152718] focus:border-[#6c9966] focus:ring-2 focus:ring-[#6c9966]/25"
             />
             {isValidEmail && (
-              <span className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-[#4e7349] text-sm font-bold">
+              <span className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-[#6c9966] text-sm font-bold">
                 ✓
               </span>
             )}
@@ -148,12 +148,12 @@ export default function RegisterEmailStep() {
         <button
           type="submit"
           disabled={loading || !isValidEmail}
-          className="w-full mt-2 py-3 px-6 bg-[#4e7349] text-white text-xs sm:text-sm font-semibold rounded-full shadow-md shadow-[#4e7349]/20 hover:bg-[#3d5c38] hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+          className="w-full mt-2 py-3 px-6 bg-[#4e7349] text-white text-xs sm:text-sm font-semibold rounded-full shadow-md shadow-[#4e7349]/30 hover:bg-[#3d5c38] hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
         >
           {loading ? (
             <>
               <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>Sending Verification Code...</span>
+              <span>Sending code...</span>
             </>
           ) : (
             <>
@@ -163,30 +163,29 @@ export default function RegisterEmailStep() {
           )}
         </button>
 
-        {/* Technical Preview Info Pill from Stitch Design */}
-        <div className="w-full bg-[#f2f6f1] border border-[#A8C3A0]/30 rounded-xl p-2.5 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-xs text-[#5e7362] mt-1">
+        {/* Info Pill */}
+        <div className="w-full bg-[#0f1b11]/80 border border-[#3d5a3c]/50 rounded-xl p-2.5 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-xs text-[#b2c7b5] mt-1">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#4e7349] animate-pulse" />
-            <span className="text-[11px]">Instant delivery &amp; encrypted token</span>
+            <span className="w-2 h-2 rounded-full bg-[#6c9966] animate-pulse" />
+            <span className="text-[11px]">Instant delivery to inbox</span>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-[#5e7362]/70">
+          <div className="flex items-center gap-1 text-[11px] text-[#8ca090]">
             <span>⏱</span>
-            <span>10-minute token window</span>
+            <span>10-minute code validity</span>
           </div>
         </div>
       </form>
 
-      {/* Card Footer from Stitch Design */}
-      <div className="relative z-10 mt-5 pt-3 text-center bg-[#f2f6f1]/80 rounded-xl p-2.5 border border-[#A8C3A0]/30">
-        <p className="text-xs text-[#5e7362]">
-          Already have a curated collection?{' '}
+      {/* Card Footer */}
+      <div className="relative z-10 mt-5 pt-3 text-center bg-[#0f1b11]/80 rounded-xl p-2.5 border border-[#3d5a3c]/50">
+        <p className="text-xs text-[#b2c7b5]">
+          Already have an account?{' '}
           <button
             type="button"
             onClick={() => setActiveTab('login')}
-            className="text-[#4e7349] hover:underline font-semibold ml-1 inline-flex items-center gap-0.5 cursor-pointer"
+            className="text-[#a8c3a0] hover:text-[#f5f1e8] hover:underline font-semibold ml-1 cursor-pointer"
           >
-            <span>Sign in here</span>
-            <span className="text-xs leading-none">↗</span>
+            Sign in
           </button>
         </p>
       </div>

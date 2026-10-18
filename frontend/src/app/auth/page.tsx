@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect } from 'react';
 import { useCurrentUser } from './hooks';
 import { useAuthStore } from './store';
@@ -22,35 +23,81 @@ export default function AuthPage() {
   return (
     <div className="relative min-h-[calc(100vh-5rem)] flex flex-col justify-center items-center px-4 py-20 sm:px-6">
       {/* Subtle Ambient Glow Orbs */}
-      <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[520px] bg-[#A8C3A0]/20 rounded-full blur-[130px] pointer-events-none -z-10" />
-      <div className="absolute top-1/3 -right-20 w-80 h-80 bg-[#E8B4A0]/15 rounded-full blur-[100px] pointer-events-none -z-10" />
+      <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[520px] bg-[#4e7349]/20 rounded-full blur-[130px] pointer-events-none -z-10" />
+      <div className="absolute top-1/3 -right-20 w-80 h-80 bg-[#E8B4A0]/10 rounded-full blur-[100px] pointer-events-none -z-10" />
 
-      {/* Central Sanctuary Card with Watermark Leaf */}
-      <div className="relative w-full max-w-xl mx-auto bg-white/95 backdrop-blur-2xl rounded-3xl p-6 sm:p-10 shadow-[0_24px_60px_rgba(32,49,35,0.12)] overflow-hidden border border-[#A8C3A0]/40">
-        {/* Watermark Plant Leaf Graphic */}
-        <div className="absolute -right-12 -bottom-16 opacity-[0.06] pointer-events-none select-none text-[#4e7349]">
-          <svg className="w-96 h-96" fill="currentColor" viewBox="0 0 200 200">
-            <path d="M100 0 C120 40 180 80 180 130 C180 170 145 200 100 200 C55 200 20 170 20 130 C20 80 80 40 100 0 Z M100 25 C85 60 42 95 42 130 C42 158 68 180 100 180 C132 180 158 158 158 130 C158 95 115 60 100 25 Z" />
-            <path
-              d="M100 40 L100 170 M100 80 C120 70 135 85 135 85 M100 110 C80 100 65 115 65 115 M100 135 C120 125 135 140 135 140"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="4"
-            />
-          </svg>
+      {/* Sanctuary Card Wrapper */}
+      <div className="relative w-full max-w-xl mx-auto my-auto z-10">
+        {/* ================= EDGE VINES ONLY (NO CORNERS) ================= */}
+        {/* Left Edge Vine - Large Vertical Image, Centered Vertically */}
+        <div
+          className="absolute top-1/2 -translate-y-1/2 -left-3 sm:-left-4 w-7 sm:w-9 h-[70%] sm:h-[75%] z-20 pointer-events-none select-none drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+          aria-hidden="true"
+        >
+          <Image
+            src="/leaf_border_vertical.png"
+            alt="Left Botanical Vine"
+            fill
+            className="object-contain"
+            sizes="40px"
+          />
         </div>
 
-        {currentUser && (
-          <ActiveSessionCard user={currentUser} onSignOut={triggerRefetch} />
-        )}
+        {/* Right Edge Vine - Large Vertical Image, Centered Vertically */}
+        <div
+          className="absolute top-1/2 -translate-y-1/2 -right-3 sm:-right-4 w-7 sm:w-9 h-[70%] sm:h-[75%] z-20 pointer-events-none select-none -scale-x-100 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+          aria-hidden="true"
+        >
+          <Image
+            src="/leaf_border_vertical.png"
+            alt="Right Botanical Vine"
+            fill
+            className="object-contain"
+            sizes="40px"
+          />
+        </div>
 
-        {/* Content: Login or Multi-Step Pre-Reg */}
-        {activeTab === 'login' ? (
-          <LoginForm onSuccess={() => triggerRefetch()} />
-        ) : (
-          <RegisterWizard onSuccess={() => triggerRefetch()} />
-        )}
+        {/* Top Edge Vine - Small Divider Image, Centered Horizontally */}
+        <div
+          className="absolute -top-3.5 sm:-top-5 left-1/2 -translate-x-1/2 w-60 sm:w-80 h-7 sm:h-9 z-20 pointer-events-none select-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
+          aria-hidden="true"
+        >
+          <Image
+            src="/leaf_divider.png"
+            alt="Top Botanical Garland"
+            fill
+            className="object-contain"
+            sizes="320px"
+          />
+        </div>
+
+        {/* Bottom Edge Vine - Small Divider Image, Centered Horizontally */}
+        <div
+          className="absolute -bottom-3.5 sm:-bottom-5 left-1/2 -translate-x-1/2 w-60 sm:w-80 h-7 sm:h-9 z-20 pointer-events-none select-none -scale-y-100 drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
+          aria-hidden="true"
+        >
+          <Image
+            src="/leaf_divider.png"
+            alt="Bottom Botanical Garland"
+            fill
+            className="object-contain"
+            sizes="320px"
+          />
+        </div>
+
+        {/* Central Sanctuary Card - Clean, Wide & Elegant Dark Green */}
+        <div className="relative w-full bg-[#142417] backdrop-blur-2xl rounded-3xl p-7 sm:p-10 shadow-[0_24px_80px_rgba(0,0,0,0.65)] overflow-hidden border border-[#3d5a3c]/60">
+          {currentUser && (
+            <ActiveSessionCard user={currentUser} onSignOut={triggerRefetch} />
+          )}
+
+          {/* Content: Login or Multi-Step Pre-Reg */}
+          {activeTab === 'login' ? (
+            <LoginForm onSuccess={() => triggerRefetch()} />
+          ) : (
+            <RegisterWizard onSuccess={() => triggerRefetch()} />
+          )}
+        </div>
       </div>
     </div>
   );

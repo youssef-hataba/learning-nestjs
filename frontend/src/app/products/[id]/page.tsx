@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, Suspense } from 'react';
 import Link from 'next/link';
 import { fetchProductById, fetchProducts, addProductReview } from '@/features/products/api';
 import { Product } from '@/features/products/types';
@@ -13,7 +13,7 @@ import ProductReviewsSection from '@/components/product/ProductReviewsSection';
 import ProductReviewModal from '@/components/product/ProductReviewModal';
 import RelatedPlants from '@/components/product/RelatedPlants';
 
-export default function ProductDetailPage({
+function ProductDetailContent({
   params: paramsPromise,
 }: {
   params: Promise<{ id: string }>;
@@ -178,5 +178,21 @@ export default function ProductDetailPage({
         isSubmitting={isSubmittingReview}
       />
     </div>
+  );
+}
+
+export default function ProductDetailPage(props: {
+  params: Promise<{ id: string }>;
+}) {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center text-[#4e7349]">
+          <div className="w-8 h-8 border-2 border-[#4e7349] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <ProductDetailContent {...props} />
+    </Suspense>
   );
 }

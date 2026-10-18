@@ -55,19 +55,19 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     <div className="relative z-10 flex flex-col">
       {/* Header */}
       <div className="flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eaf1e8] text-[#3c5a38] mb-3 shadow-xs border border-[#A8C3A0]/40">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1b2f1f] text-[#a8c3a0] mb-3 shadow-xs border border-[#4e7349]/40">
           <span className="text-sm">🌱</span>
           <span className="text-[11px] font-semibold tracking-wider uppercase">
-            Sanctuary Member Access
+            Welcome Back
           </span>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#203123] tracking-tight mb-2">
-          Access Your Sanctuary
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#f5f1e8] tracking-tight mb-2">
+          Sign In
         </h1>
 
-        <p className="text-xs sm:text-sm text-[#5e7362] max-w-sm mx-auto mb-5 leading-relaxed">
-          Sign in to manage your architectural houseplant orders and care profiles.
+        <p className="text-xs sm:text-sm text-[#b2c7b5] max-w-sm mx-auto mb-5 leading-relaxed">
+          Welcome back! Enter your details to access your account.
         </p>
       </div>
 
@@ -76,7 +76,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         <button
           type="button"
           onClick={handleGoogleAuth}
-          className="w-full py-2.5 px-4 rounded-full border border-[#A8C3A0]/40 bg-white hover:bg-[#f4f7f3] text-[#203123] text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-3 shadow-xs hover:shadow-md cursor-pointer"
+          className="w-full py-2.5 px-4 rounded-full border border-[#4e7349]/40 bg-[#1c3020]/90 hover:bg-[#25402a] text-[#f5f1e8] text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-3 shadow-xs hover:shadow-md cursor-pointer"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -100,20 +100,20 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         </button>
 
         <div className="relative flex items-center justify-center my-4">
-          <div className="border-t border-[#A8C3A0]/30 w-full" />
-          <span className="bg-white px-3 text-[11px] text-[#5e7362] absolute uppercase tracking-wider font-medium">
-            or sign in with email
+          <div className="border-t border-[#3d5a3c]/60 w-full" />
+          <span className="bg-[#142417] px-3 text-[11px] text-[#8ca090] absolute uppercase tracking-wider font-medium">
+            or continue with email
           </span>
         </div>
       </div>
 
       <form onSubmit={handleLogin} className="space-y-3.5">
         <div>
-          <label className="block text-xs font-semibold text-[#203123] mb-1.5">
-            Botanical Email Address <span className="text-[#4e7349]">*</span>
+          <label className="block text-xs font-semibold text-[#e3ebe0] mb-1.5">
+            Email Address <span className="text-[#a8c3a0]">*</span>
           </label>
           <div className="relative group">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8ca090] group-focus-within:text-[#4e7349] transition-colors text-sm">
+            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6f8873] group-focus-within:text-[#a8c3a0] transition-colors text-sm">
               @
             </span>
             <input
@@ -121,15 +121,15 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="curator@sanctuary.com"
-              className="w-full pl-9 pr-4 py-2.5 bg-[#f8faf7] text-[#203123] placeholder-[#8ca090] text-xs sm:text-sm rounded-xl border border-[#A8C3A0]/40 outline-none transition-all duration-300 focus:bg-white focus:border-[#4e7349] focus:ring-2 focus:ring-[#4e7349]/20"
+              placeholder="name@example.com"
+              className="w-full pl-9 pr-4 py-2.5 bg-[#0f1b11] text-[#f5f1e8] placeholder-[#6f8873] text-xs sm:text-sm rounded-xl border border-[#3d5a3c] outline-none transition-all duration-300 focus:bg-[#152718] focus:border-[#6c9966] focus:ring-2 focus:ring-[#6c9966]/25"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[#203123] mb-1.5">
-            Password <span className="text-[#4e7349]">*</span>
+          <label className="block text-xs font-semibold text-[#e3ebe0] mb-1.5">
+            Password <span className="text-[#a8c3a0]">*</span>
           </label>
           <input
             type="password"
@@ -137,23 +137,23 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full px-3.5 py-2.5 bg-[#f8faf7] text-[#203123] placeholder-[#8ca090] text-xs sm:text-sm rounded-xl border border-[#A8C3A0]/40 outline-none transition-all duration-300 focus:bg-white focus:border-[#4e7349] focus:ring-2 focus:ring-[#4e7349]/20"
+            className="w-full px-3.5 py-2.5 bg-[#0f1b11] text-[#f5f1e8] placeholder-[#6f8873] text-xs sm:text-sm rounded-xl border border-[#3d5a3c] outline-none transition-all duration-300 focus:bg-[#152718] focus:border-[#6c9966] focus:ring-2 focus:ring-[#6c9966]/25"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading || !email || !password}
-          className="w-full mt-2 py-3 px-6 bg-[#4e7349] text-white text-xs sm:text-sm font-semibold rounded-full shadow-md shadow-[#4e7349]/20 hover:bg-[#3d5c38] hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+          className="w-full mt-2 py-3 px-6 bg-[#4e7349] text-white text-xs sm:text-sm font-semibold rounded-full shadow-md shadow-[#4e7349]/30 hover:bg-[#3d5c38] hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
         >
           {loading ? (
             <>
               <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>Authenticating...</span>
+              <span>Signing in...</span>
             </>
           ) : (
             <>
-              <span>Sign In to Planto</span>
+              <span>Sign In</span>
               <span className="text-base leading-none">→</span>
             </>
           )}
@@ -161,16 +161,15 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       </form>
 
       {/* Card Footer */}
-      <div className="relative z-10 mt-5 pt-3 text-center bg-[#f2f6f1]/80 rounded-xl p-2.5 border border-[#A8C3A0]/30">
-        <p className="text-xs text-[#5e7362]">
-          New to Planto Sanctuary?{' '}
+      <div className="relative z-10 mt-5 pt-3 text-center bg-[#0f1b11]/80 rounded-xl p-2.5 border border-[#3d5a3c]/50">
+        <p className="text-xs text-[#b2c7b5]">
+          Don&apos;t have an account?{' '}
           <button
             type="button"
             onClick={() => setActiveTab('register')}
-            className="text-[#4e7349] hover:underline font-semibold ml-1 inline-flex items-center gap-0.5 cursor-pointer"
+            className="text-[#a8c3a0] hover:text-[#f5f1e8] hover:underline font-semibold ml-1 cursor-pointer"
           >
-            <span>Cultivate your sanctuary</span>
-            <span className="text-xs leading-none">↗</span>
+            Sign up
           </button>
         </p>
       </div>

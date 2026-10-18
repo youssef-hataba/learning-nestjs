@@ -131,28 +131,28 @@ export default function RegisterOtpStep() {
     <div className="flex flex-col">
       {/* Title & Badge */}
       <div className="text-center mb-6">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eaf1e8] border border-[#A8C3A0]/40 text-[#3c5a38] text-[11px] font-semibold uppercase tracking-wider mb-3">
-          🌱 Security Code Verification
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1b2f1f] border border-[#4e7349]/40 text-[#a8c3a0] text-[11px] font-semibold uppercase tracking-wider mb-3">
+          🌱 Verification Code
         </span>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-[#203123] tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-[#f5f1e8] tracking-tight">
           Enter Verification Code
         </h2>
-        <p className="text-xs sm:text-sm text-[#5e7362] mt-2 max-w-sm mx-auto leading-relaxed">
-          Enter the 6-digit code dispatched to your mailbox to verify your sanctuary account.
+        <p className="text-xs sm:text-sm text-[#b2c7b5] mt-2 max-w-sm mx-auto leading-relaxed">
+          Enter the 6-digit code sent to your email address.
         </p>
       </div>
 
       <form onSubmit={handleVerifyOtp} className="space-y-5">
         {/* Email Pill with inline change button */}
-        <div className="rounded-xl bg-[#f2f6f1] border border-[#A8C3A0]/40 px-4 py-2.5 flex items-center justify-between text-xs">
+        <div className="rounded-xl bg-[#0f1b11] border border-[#3d5a3c]/60 px-4 py-2.5 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <span className="text-[#4e7349]">✉</span>
-            <span className="font-mono text-[#203123] font-semibold truncate">{email}</span>
+            <span className="text-[#a8c3a0]">✉</span>
+            <span className="font-mono text-[#f5f1e8] font-semibold truncate">{email}</span>
           </div>
           <button
             type="button"
             onClick={() => setRegStep('email')}
-            className="text-xs text-[#4e7349] hover:text-[#203123] font-semibold flex items-center gap-1 cursor-pointer shrink-0"
+            className="text-xs text-[#a8c3a0] hover:text-[#f5f1e8] font-semibold flex items-center gap-1 cursor-pointer shrink-0"
           >
             <span>Change</span>
             <span>✏</span>
@@ -162,10 +162,10 @@ export default function RegisterOtpStep() {
         {/* 6 Segmented Digit Input Boxes */}
         <div>
           <div className="flex justify-between items-center mb-2.5">
-            <label className="text-xs font-semibold text-[#203123]">
-              Botanical 6-Digit Code
+            <label className="text-xs font-semibold text-[#e3ebe0]">
+              6-Digit Code
             </label>
-            <span className="text-[11px] text-[#5e7362]">
+            <span className="text-[11px] text-[#8ca090]">
               {otpCode.length}/6 digits
             </span>
           </div>
@@ -189,8 +189,8 @@ export default function RegisterOtpStep() {
                   autoFocus={idx === 0}
                   className={`w-full h-12 sm:h-14 text-center font-mono text-xl sm:text-2xl font-bold rounded-xl border transition-all focus:outline-none ${
                     isFilled
-                      ? 'border-[#4e7349] bg-white text-[#203123] ring-2 ring-[#4e7349]/20 shadow-xs'
-                      : 'border-[#A8C3A0]/40 bg-[#f8faf7] text-[#203123] focus:border-[#4e7349] focus:bg-white'
+                      ? 'border-[#6c9966] bg-[#1e3422] text-[#f5f1e8] ring-2 ring-[#6c9966]/30 shadow-xs'
+                      : 'border-[#3d5a3c] bg-[#0f1b11] text-[#f5f1e8] focus:border-[#6c9966] focus:bg-[#152718]'
                   }`}
                 />
               );
@@ -199,12 +199,12 @@ export default function RegisterOtpStep() {
         </div>
 
         {/* Resend Code / Timer Row */}
-        <div className="flex items-center justify-between text-xs text-[#5e7362] pt-1">
+        <div className="flex items-center justify-between text-xs text-[#b2c7b5] pt-1">
           <div className="flex items-center gap-1.5">
             <span>⏱</span>
             <span>
               {resendCooldown > 0 ? (
-                <>Resend Code in <strong className="text-[#203123] font-mono">{formatCooldown(resendCooldown)}</strong></>
+                <>Resend Code in <strong className="text-[#f5f1e8] font-mono">{formatCooldown(resendCooldown)}</strong></>
               ) : (
                 'Code ready to resend'
               )}
@@ -215,7 +215,7 @@ export default function RegisterOtpStep() {
             type="button"
             onClick={handleResendOtp}
             disabled={loading || resendCooldown > 0}
-            className="text-xs font-semibold text-[#4e7349] hover:text-[#3d5c38] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="text-xs font-semibold text-[#a8c3a0] hover:text-[#f5f1e8] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
             ↻ Resend Code
           </button>
@@ -225,7 +225,7 @@ export default function RegisterOtpStep() {
         <button
           type="submit"
           disabled={loading || otpCode.length !== 6}
-          className="w-full rounded-full bg-[#4e7349] py-3 text-xs sm:text-sm font-semibold text-white hover:bg-[#3d5c38] hover:shadow-lg transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2 mt-2 shadow-md shadow-[#4e7349]/20"
+          className="w-full rounded-full bg-[#4e7349] py-3 text-xs sm:text-sm font-semibold text-white hover:bg-[#3d5c38] hover:shadow-lg transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2 mt-2 shadow-md shadow-[#4e7349]/30"
         >
           {loading ? (
             <>
