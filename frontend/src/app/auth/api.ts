@@ -7,6 +7,7 @@ import {
   SendVerificationCodeResponse,
   VerifyCodeResponse,
 } from './types';
+import { useUserStore } from './userStore';
 
 export async function loginUser(dto: LoginDto): Promise<AuthResponse> {
   const data = await apiFetch<AuthResponse>('/users/auth/login', {
@@ -15,6 +16,9 @@ export async function loginUser(dto: LoginDto): Promise<AuthResponse> {
   });
   if (data?.token && typeof window !== 'undefined') {
     localStorage.setItem('token', data.token);
+  }
+  if (data?.user && data?.token) {
+    useUserStore.getState().setAuth(data.user, data.token);
   }
   return data;
 }
@@ -26,6 +30,9 @@ export async function registerUser(dto: RegisterDto): Promise<AuthResponse> {
   });
   if (data?.token && typeof window !== 'undefined') {
     localStorage.setItem('token', data.token);
+  }
+  if (data?.user && data?.token) {
+    useUserStore.getState().setAuth(data.user, data.token);
   }
   return data;
 }
@@ -49,7 +56,5 @@ export async function getMe(): Promise<User> {
 }
 
 export function logoutUser(): void {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('token');
-  }
+  useUserStore.getState().clearAuth();
 }

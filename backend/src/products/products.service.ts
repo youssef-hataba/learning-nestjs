@@ -43,7 +43,7 @@ export class ProductsService {
         applyPagination(queryBuilder, page, limit);
 
         const [data, totalItems] = await queryBuilder.getManyAndCount();
-        const meta = buildPaginationMeta(page, limit, totalItems);
+        const meta = buildPaginationMeta(totalItems, page, limit);
 
         return { data, meta };
     }

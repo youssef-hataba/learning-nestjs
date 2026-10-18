@@ -1,3 +1,5 @@
+import BrandLogo from '@/components/ui/BrandLogo';
+
 export default function Footer() {
   return (
     <footer className="mt-auto border-t border-white/5 bg-[#091009] text-xs text-[#c2c9b5]/80">
@@ -5,13 +7,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start pb-12 border-b border-white/5">
           {/* Brand Info */}
           <div className="md:col-span-5 flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-lg tracking-tight text-[#f6ffe4]">Planto</span>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#1a211a] text-[#b6f076] border border-[#b6f076]/30">
+            <div className="flex items-center gap-3">
+              <BrandLogo size="md" showTagline={false} />
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#1a211a] text-[#b6f076] border border-[#b6f076]/30 font-medium">
                 Biophilic Noir
               </span>
             </div>
-            <p className="text-xs text-[#c2c9b5]/70 max-w-sm leading-relaxed">
+            <p className="text-xs text-[#c2c9b5]/70 max-w-sm leading-relaxed mt-1">
               Curated botanical collections and architectural houseplants cultivated for indoor air quality and refined interior sanctuaries.
             </p>
           </div>
@@ -20,9 +22,9 @@ export default function Footer() {
           <div className="md:col-span-3 flex flex-col gap-2.5">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-[#f6ffe4]">Quick Links</h4>
             <div className="flex flex-col gap-2 text-xs">
-              <a href="#trending" className="hover:text-[#b6f076] transition-colors">Shop Plants</a>
-              <a href="#best-o2" className="hover:text-[#b6f076] transition-colors">Best O2 Plants</a>
-              <a href="#reviews" className="hover:text-[#b6f076] transition-colors">Customer Stories</a>
+              <a href="/#trending" className="hover:text-[#b6f076] transition-colors">Shop Plants</a>
+              <a href="/#best-o2" className="hover:text-[#b6f076] transition-colors">Best O2 Plants</a>
+              <a href="/#reviews" className="hover:text-[#b6f076] transition-colors">Customer Stories</a>
               <a href="http://localhost:3000/api" target="_blank" rel="noreferrer" className="hover:text-[#b6f076] transition-colors">
                 NestJS API Specs
               </a>
@@ -40,7 +42,7 @@ export default function Footer() {
               />
               <button
                 type="button"
-                className="absolute right-1 px-4 py-1.5 rounded-full bg-[#b6f076] text-[#121812] text-xs font-semibold hover:bg-[#c7f88f] transition-all"
+                className="absolute right-1 px-4 py-1.5 rounded-full bg-[#b6f076] text-[#121812] text-xs font-semibold hover:bg-[#c7f88f] transition-all cursor-pointer"
               >
                 Subscribe
               </button>

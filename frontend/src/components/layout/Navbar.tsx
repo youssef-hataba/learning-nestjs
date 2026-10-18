@@ -1,29 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCurrentUserData } from '@/app/auth';
 import { useAuthStore } from '@/app/auth/store';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 export default function Navbar() {
   const [cartCount] = useState(2);
-  const { data: user } = useCurrentUserData();
+  const [mounted, setMounted] = useState(false);
+  const { data: user, isHydrated } = useCurrentUserData();
   const { openAuthModal, openProfileModal } = useAuthStore();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#091009]/80 backdrop-blur-2xl border-b border-white/5 transition-all">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#091009]/85 backdrop-blur-2xl border-b border-white/5 transition-all">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="h-9 w-9 rounded-full bg-[#1a211a] border border-[#b6f076]/30 flex items-center justify-center text-[#b6f076] group-hover:border-[#b6f076] transition-colors shadow-[0_0_12px_rgba(182,240,118,0.2)]">
-            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-              <path d="M12 2C8 2 4 6 4 11c0 4.5 3.5 8 8 9 4.5-1 8-4.5 8-9 0-5-4-9-8-9zm0 16c-3.3 0-6-2.7-6-6 0-3 2.2-5.4 5-5.9V13h2V6.1c2.8.5 5 2.9 5 5.9 0 3.3-2.7 6-6 6z" />
-            </svg>
-          </div>
-          <span className="font-bold text-xl tracking-tight text-[#f6ffe4] group-hover:text-white transition-colors">
-            Planto
-          </span>
-        </Link>
+        {/* Chic Expressive Brand Logo */}
+        <BrandLogo size="md" showTagline={true} />
 
         {/* Floating Center Navigation Dock */}
         <nav className="hidden lg:flex items-center gap-1 bg-[#1a211a]/70 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-md">
@@ -34,25 +31,25 @@ export default function Navbar() {
             Home
           </Link>
           <Link
-            href="#trending"
+            href="/#trending"
             className="px-4 py-1.5 rounded-full text-[#c2c9b5] hover:text-[#f6ffe4] hover:bg-white/5 text-xs font-medium transition-colors"
           >
             Shop Plants
           </Link>
           <Link
-            href="#best-o2"
+            href="/#best-o2"
             className="px-4 py-1.5 rounded-full text-[#c2c9b5] hover:text-[#f6ffe4] hover:bg-white/5 text-xs font-medium transition-colors"
           >
             Best O2 Plants
           </Link>
           <Link
-            href="#top-selling"
+            href="/#top-selling"
             className="px-4 py-1.5 rounded-full text-[#c2c9b5] hover:text-[#f6ffe4] hover:bg-white/5 text-xs font-medium transition-colors"
           >
             Top Selling
           </Link>
           <Link
-            href="#reviews"
+            href="/#reviews"
             className="px-4 py-1.5 rounded-full text-[#c2c9b5] hover:text-[#f6ffe4] hover:bg-white/5 text-xs font-medium transition-colors"
           >
             Reviews
@@ -61,27 +58,10 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-3">
-          {/* Search Pill */}
-          <div className="hidden md:flex items-center bg-[#1a211a]/80 border border-white/10 rounded-full px-3 py-1.5 backdrop-blur-sm focus-within:border-[#b6f076]/60 transition-colors">
-            <svg
-              className="w-4 h-4 text-[#c2c9b5] mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search plants, pots..."
-              className="bg-transparent text-xs text-[#dde5d9] placeholder-[#c2c9b5]/50 focus:outline-none w-32 lg:w-36"
-            />
-          </div>
-
           {/* Cart preview */}
           <button
             type="button"
-            className="relative flex items-center justify-center w-10 h-10 rounded-full bg-[#1a211a] border border-white/10 text-[#dde5d9] hover:border-[#b6f076]/40 hover:text-[#f6ffe4] transition-colors"
+            className="relative flex items-center justify-center w-10 h-10 rounded-full bg-[#1a211a] border border-white/10 text-[#dde5d9] hover:border-[#b6f076]/40 hover:text-[#f6ffe4] transition-colors cursor-pointer"
             aria-label="Cart"
           >
             <svg
@@ -102,8 +82,10 @@ export default function Navbar() {
             </span>
           </button>
 
-          {/* User Sign In / Profile */}
-          {user ? (
+          {/* User Sign In / Profile with Zero-Flicker Hydration State */}
+          {!mounted || !isHydrated ? (
+            <div className="w-20 h-8 rounded-full bg-[#1a211a] border border-white/5 opacity-60 animate-pulse" />
+          ) : user ? (
             <button
               type="button"
               onClick={openProfileModal}
