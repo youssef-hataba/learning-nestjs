@@ -1,8 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import * as fs from "fs";
-import * as path from "path";
 import { CreateProductDto } from "./DTOs/create-product.dto.js";
 import { UpdateProductDto } from "./DTOs/update-product.dto.js";
 import { QueryProductsDto } from "./DTOs/query-products.dto.js";
@@ -11,7 +9,7 @@ import { User } from "../users/user.entity.js";
 import { PaginatedResult } from "../utils/types.js";
 import { applyPagination, buildPaginationMeta } from "../utils/pagination.helper.js";
 import { applyProductFilters, applyProductSorting } from "./helpers/product-query.helper.js";
-import { PRODUCT_IMAGES_DIR } from "./helpers/product-images-upload.helper.js";
+import { CloudinaryService } from "../cloudinary/cloudinary.service.js";
 
 export type PaginatedProductsResponse = PaginatedResult<Product>;
 
@@ -19,8 +17,9 @@ export type PaginatedProductsResponse = PaginatedResult<Product>;
 export class ProductsService {
     constructor(
         @InjectRepository(Product)
-        private readonly productsRepository: Repository<Product>
-    ) { }
+        private readonly productsRepository: Repository<Product>,
+        private readonly cloudinaryService: CloudinaryService,
+    ) {}
 
     async createProduct(dto: CreateProductDto, userId: string): Promise<Product> {
         const newProduct = this.productsRepository.create({
@@ -43,40 +42,42 @@ export class ProductsService {
         applyProductSorting(queryBuilder, query.sortBy, query.sortOrder);
         applyPagination(queryBuilder, page, limit);
 
-        const [items, total] = await queryBuilder.getManyAndCount();
+        const [data, totalItems] = await queryBuilder.getManyAndCount();
+        const meta = buildPaginationMeta(page, limit, totalItems);
 
-        return {
-            data: items,
-            meta: buildPaginationMeta(total, page, limit),
-        };
+        return { data, meta };
     }
 
     async getProductById(id: string): Promise<Product> {
         const product = await this.productsRepository.findOne({
             where: { id },
-            relations: { reviews: true, user: true },
+            relations: {
+                reviews: {
+                    user: true,
+                },
+                user: true,
+            },
         });
-
         if (!product) {
-            throw new NotFoundException(`Product with ID "${id}" not found`);
+            throw new NotFoundException("Product not found");
         }
-
         return product;
     }
 
-    async updateProduct(id: string, dto: UpdateProductDto): Promise<Product> {
+    async updateProduct(id: string, body: UpdateProductDto): Promise<Product> {
         const product = await this.getProductById(id);
-        // Copies all provided fields from dto into product entity (partial update / mutation)
-        Object.assign(product, dto);
-        return await this.productsRepository.save(product);
+        const updated = Object.assign(product, body);
+        return await this.productsRepository.save(updated);
     }
 
     async deleteProduct(id: string): Promise<{ message: string }> {
         const product = await this.getProductById(id);
 
-        // Delete all associated image files from disk
+        // Delete all associated product images from Cloudinary
         if (product.images && product.images.length > 0) {
-            product.images.forEach((img) => this.deleteImageFileFromDisk(img));
+            await Promise.all(
+                product.images.map((imgUrl) => this.cloudinaryService.deleteImage(imgUrl))
+            );
         }
 
         await this.productsRepository.remove(product);
@@ -86,24 +87,23 @@ export class ProductsService {
     }
 
     // ==========================================
-    // 🖼️ PRODUCT IMAGES MANAGEMENT
+    // 🖼️ PRODUCT IMAGES MANAGEMENT (Cloudinary)
     // ==========================================
 
     async uploadProductImages(
         id: string,
         files: Express.Multer.File[]
     ): Promise<{ message: string; images: string[] }> {
-        let product: Product;
-        try {
-            product = await this.getProductById(id);
-        } catch (error) {
-            // Clean up newly uploaded files if product doesn't exist
-            files.forEach((file) => this.deleteImageFileFromDisk(file.filename));
-            throw error;
-        }
+        const product = await this.getProductById(id);
 
-        const newFilenames = files.map((file) => file.filename);
-        product.images = [...(product.images || []), ...newFilenames];
+        // Stream each image buffer to Cloudinary concurrently
+        const uploadPromises = files.map((file) =>
+            this.cloudinaryService.uploadImage(file, "planto/products")
+        );
+        const uploadResults = await Promise.all(uploadPromises);
+        const newImageUrls = uploadResults.map((res) => res.secure_url);
+
+        product.images = [...(product.images || []), ...newImageUrls];
         const saved = await this.productsRepository.save(product);
 
         return {
@@ -114,19 +114,24 @@ export class ProductsService {
 
     async deleteProductImage(
         id: string,
-        filename: string
+        imageIdentifier: string
     ): Promise<{ message: string; images: string[] }> {
         const product = await this.getProductById(id);
 
-        if (!product.images || !product.images.includes(filename)) {
-            throw new NotFoundException(`Image "${filename}" not found on this product`);
+        const targetImage = (product.images || []).find(
+            (img) => img === imageIdentifier || img.includes(imageIdentifier)
+        );
+
+        if (!targetImage) {
+            throw new NotFoundException(`Image "${imageIdentifier}" not found on this product`);
         }
 
-        product.images = product.images.filter((img) => img !== filename);
-        await this.productsRepository.save(product);
+        // Delete from Cloudinary
+        await this.cloudinaryService.deleteImage(targetImage);
 
-        // Delete file from disk
-        this.deleteImageFileFromDisk(filename);
+        // Remove from database
+        product.images = product.images.filter((img) => img !== targetImage);
+        await this.productsRepository.save(product);
 
         return {
             message: "Product image deleted successfully",
@@ -134,23 +139,16 @@ export class ProductsService {
         };
     }
 
-    getProductImagePath(filename: string): string {
-        const filePath = path.join(PRODUCT_IMAGES_DIR, filename);
-        if (!fs.existsSync(filePath)) {
-            throw new NotFoundException(`Product image "${filename}" not found on disk`);
-        }
-        return filePath;
-    }
+    async findProductImageUrl(filename: string): Promise<string> {
+        const product = await this.productsRepository
+            .createQueryBuilder("product")
+            .where("array_to_string(product.images, ',') LIKE :filename", { filename: `%${filename}%` })
+            .getOne();
 
-    private deleteImageFileFromDisk(filename: string): void {
-        try {
-            const filePath = path.join(PRODUCT_IMAGES_DIR, filename);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        } catch (error) {
-            console.error(`Failed to delete product image "${filename}" from disk:`, error);
+        const match = product?.images?.find((img) => img.includes(filename));
+        if (!match) {
+            throw new NotFoundException(`Product image "${filename}" not found`);
         }
+        return match;
     }
 }
-

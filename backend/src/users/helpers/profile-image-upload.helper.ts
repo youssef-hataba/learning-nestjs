@@ -1,35 +1,17 @@
 import { BadRequestException } from "@nestjs/common";
-import { diskStorage } from "multer";
-import * as fs from "fs";
-import * as path from "path";
-
-export const PROFILE_IMAGES_DIR = path.resolve(process.cwd(), "uploads", "profile-images");
-
-// Ensure the upload directory exists
-if (!fs.existsSync(PROFILE_IMAGES_DIR)) {
-    fs.mkdirSync(PROFILE_IMAGES_DIR, { recursive: true });
-}
+import { memoryStorage } from "multer";
 
 /**
- * Custom disk storage using user-<userId>-profile.<ext> naming format.
+ * Memory storage for profile images - buffers are streamed directly to Cloudinary
+ * without saving temporary files to disk.
  */
-export const profileImageStorage = diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, PROFILE_IMAGES_DIR);
-    },
-    filename: (req: any, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const userId = req.user?.userId;
-        const filename = userId ? `user-${userId}-profile${ext}` : `user-${Date.now()}-profile${ext}`;
-        cb(null, filename);
-    },
-});
+export const profileImageStorage = memoryStorage();
 
 /**
  * Filter to allow only specific image formats (JPEG, JPG, PNG, WEBP).
  */
 export const profileImageFilter = (
-    req: any,
+    _req: any,
     file: Express.Multer.File,
     cb: (error: Error | null, acceptFile: boolean) => void
 ) => {
@@ -52,7 +34,7 @@ export const profileImageFilter = (
 };
 
 /**
- * Full Multer configuration for profile image uploads.
+ * Full Multer configuration for profile image uploads with MemoryStorage.
  */
 export const profileImageUploadOptions = {
     storage: profileImageStorage,

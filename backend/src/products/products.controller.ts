@@ -52,12 +52,12 @@ export class ProductsController {
     // 🖼️ PRODUCT IMAGES (Declared before :id to prevent UUID parse collision)
     // ==========================================
     @Get("images/:filename")
-    getProductImage(
+    async getProductImage(
         @Param("filename") filename: string,
         @Res() res: Response,
     ) {
-        const filePath = this.productsService.getProductImagePath(filename);
-        res.sendFile(filePath);
+        const imageUrl = await this.productsService.findProductImageUrl(filename);
+        return res.redirect(imageUrl);
     }
 
     @Get(":id")

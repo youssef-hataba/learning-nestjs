@@ -64,7 +64,7 @@ export class UsersController {
         if (!file) {
             throw new BadRequestException("Profile image file is required");
         }
-        return this.profileImageService.setProfileImage(user.userId, file.filename);
+        return this.profileImageService.setProfileImage(user.userId, file);
     }
 
     @Get("profile-image")
@@ -73,8 +73,8 @@ export class UsersController {
         @CurrentUser() user: JwtPayload,
         @Res() res: Response,
     ) {
-        const filePath = await this.profileImageService.getProfileImagePath(user.userId);
-        res.sendFile(filePath);
+        const imageUrl = await this.profileImageService.getProfileImageUrl(user.userId);
+        return res.redirect(imageUrl);
     }
 
     @Delete("profile-image")

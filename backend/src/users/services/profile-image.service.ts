@@ -1,16 +1,15 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import * as fs from "fs";
-import * as path from "path";
 import { User } from "../user.entity.js";
-import { PROFILE_IMAGES_DIR } from "../helpers/profile-image-upload.helper.js";
+import { CloudinaryService } from "../../cloudinary/cloudinary.service.js";
 
 @Injectable()
 export class ProfileImageService {
     constructor(
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
+        private readonly cloudinaryService: CloudinaryService,
     ) {}
 
     private async findUserOrThrow(userId: string): Promise<User> {
@@ -21,35 +20,37 @@ export class ProfileImageService {
         return user;
     }
 
-    private deleteImageFileFromDisk(filename: string): void {
-        try {
-            const filePath = path.join(PROFILE_IMAGES_DIR, filename);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        } catch (error) {
-            console.error(`Failed to delete profile image "${filename}" from disk:`, error);
-        }
-    }
-
-    async setProfileImage(userId: string, filename: string): Promise<{ message: string; profileImage: string }> {
+    /**
+     * Uploads user's profile image to Cloudinary and saves secure URL.
+     * Automatically cleans up previous Cloudinary asset if replaced.
+     */
+    async setProfileImage(
+        userId: string,
+        file: Express.Multer.File
+    ): Promise<{ message: string; profileImage: string }> {
         const user = await this.findUserOrThrow(userId);
         const isUpdated = Boolean(user.profileImage);
 
-        // If user already has an image on disk, remove it before setting the new one
+        // Delete old image from Cloudinary if it was previously uploaded
         if (user.profileImage) {
-            this.deleteImageFileFromDisk(user.profileImage);
+            await this.cloudinaryService.deleteImage(user.profileImage);
         }
 
-        user.profileImage = filename;
+        // Upload buffer directly to Cloudinary
+        const uploadResult = await this.cloudinaryService.uploadImage(file, "planto/profiles");
+
+        user.profileImage = uploadResult.secure_url;
         await this.usersRepository.save(user);
 
         return {
             message: isUpdated ? "Profile image updated successfully" : "Profile image set successfully",
-            profileImage: filename,
+            profileImage: uploadResult.secure_url,
         };
     }
 
+    /**
+     * Deletes the user's profile image from Cloudinary and clears DB record.
+     */
     async removeProfileImage(userId: string): Promise<{ message: string }> {
         const user = await this.findUserOrThrow(userId);
 
@@ -57,8 +58,7 @@ export class ProfileImageService {
             throw new BadRequestException("User does not have a profile image to remove");
         }
 
-        // Delete image file from disk
-        this.deleteImageFileFromDisk(user.profileImage);
+        await this.cloudinaryService.deleteImage(user.profileImage);
 
         user.profileImage = null;
         await this.usersRepository.save(user);
@@ -68,18 +68,16 @@ export class ProfileImageService {
         };
     }
 
-    async getProfileImagePath(userId: string): Promise<string> {
+    /**
+     * Retrieves the profile image URL (Cloudinary or Google OAuth CDN).
+     */
+    async getProfileImageUrl(userId: string): Promise<string> {
         const user = await this.findUserOrThrow(userId);
 
         if (!user.profileImage) {
             throw new NotFoundException("User does not have a profile image");
         }
 
-        const filePath = path.join(PROFILE_IMAGES_DIR, user.profileImage);
-        if (!fs.existsSync(filePath)) {
-            throw new NotFoundException("Profile image file not found on disk");
-        }
-
-        return filePath;
+        return user.profileImage;
     }
 }

@@ -212,7 +212,7 @@
           "response": []
         },
         {
-          "name": "🖼️ Upload Product Images (Admin Only)",
+          "name": "🖼️ Upload Product Images (Admin Only - Cloudinary)",
           "request": {
             "method": "POST",
             "header": [
@@ -250,7 +250,7 @@
                 }
               ]
             },
-            "description": "### 🖼️ Upload Product Images (Admin Only)\nUploads multiple images for a product using Multer diskStorage (`uploads/products/`).\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/products/:id/images`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Body:** `form-data` with key `images` (supports multiple files)\n* **Allowed Formats:** JPEG, JPG, PNG, WEBP\n* **Max Size:** 5 MB per file, max 5 files per upload"
+            "description": "### 🖼️ Upload Product Images (Admin Only - Cloudinary)\nUploads multiple product images concurrently directly to Cloudinary (`planto/products`) using streaming MemoryStorage without disk persistence.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/products/:id/images`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Body:** `form-data` with key `images` (supports multiple files)\n* **Storage:** Cloudinary Cloud Storage (`memoryStorage`)\n* **Allowed Formats:** JPEG, JPG, PNG, WEBP\n* **Max Size:** 5 MB per file, max 5 files per upload\n* **Response:** `{ \"message\": \"N image(s) uploaded successfully\", \"images\": [\"https://res.cloudinary.com/planto/...\", ...] }`"
           },
           "response": []
         },
@@ -277,12 +277,12 @@
                 }
               ]
             },
-            "description": "### 🖼️ Get Product Image\nStreams a product image file from disk storage.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/products/images/:filename`\n* **Access:** Public\n* **Throws:** `404 Not Found` if image file is not found on disk."
+            "description": "### 🖼️ Get Product Image\nRedirects (HTTP 302) to the matching product image hosted on Cloudinary.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/products/images/:filename`\n* **Response:** `302 Found` redirecting to Cloudinary URL."
           },
           "response": []
         },
         {
-          "name": "🗑️ Delete Product Image (Admin Only)",
+          "name": "🗑️ Delete Product Image (Admin Only - Cloudinary)",
           "request": {
             "method": "DELETE",
             "header": [
@@ -315,7 +315,7 @@
                 }
               ]
             },
-            "description": "### 🗑️ Delete Product Image (Admin Only)\nRemoves a specific image from product entity and deletes the physical file from disk.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/products/:id/images/:filename`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Throws:** `404 Not Found` if product or image does not exist."
+            "description": "### 🗑️ Delete Product Image (Admin Only - Cloudinary)\nDestroys the specified product image from Cloudinary asset storage and removes its URL from the product's images array.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/products/:id/images/:filename`\n* **Header:** `Authorization: Bearer <token>`\n* **Access:** Admin only (`@Roles(UserType.ADMIN)`)\n* **Response:** `{ \"message\": \"Product image deleted successfully\", \"images\": [...] }`"
           },
           "response": []
         }
@@ -478,6 +478,60 @@
           "response": []
         },
         {
+          "name": "🌐 Google OAuth 2.0 Login (Redirect)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/google",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "google"
+              ]
+            },
+            "description": "### 🌐 Google OAuth 2.0 Login\nRedirects the browser / user to Google's OAuth 2.0 Consent Screen with `openid profile email` scopes.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users/auth/google`\n* **Response:** `302 Redirect` to `https://accounts.google.com/o/oauth2/v2/auth?...`"
+          },
+          "response": []
+        },
+        {
+          "name": "🌐 Google OAuth 2.0 Callback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/auth/google/callback?code={{googleAuthCode}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "auth",
+                "google",
+                "callback"
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "{{googleAuthCode}}",
+                  "description": "Authorization code returned by Google"
+                },
+                {
+                  "key": "error",
+                  "value": "",
+                  "disabled": true,
+                  "description": "Error string if user declined consent"
+                }
+              ]
+            },
+            "description": "### 🌐 Google OAuth 2.0 Callback\nGoogle redirects the user here with a one-time authorization `code`. The backend exchanges the code for a Google token, loads user info, creates or links the account, emits registration events, signs a Planto JWT, and redirects to the frontend callback URL.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users/auth/google/callback?code=<code>`\n* **Response:** `302 Redirect` to `${frontendUrl}/auth/callback?token=<jwt>`"
+          },
+          "response": []
+        },
+        {
           "name": "👤 Get Current User Profile (Me)",
           "request": {
             "method": "GET",
@@ -566,7 +620,7 @@
           "response": []
         },
         {
-          "name": "🖼️ Upload Profile Image",
+          "name": "🖼️ Upload Profile Image (Cloudinary)",
           "request": {
             "method": "POST",
             "header": [
@@ -597,7 +651,7 @@
                 "profile-image"
               ]
             },
-            "description": "### 🖼️ Upload Profile Image\nUploads or replaces the authenticated user's profile image using Multer diskStorage. If an existing image exists, it is automatically removed from disk.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/users/auth/profile-image`\n* **Header:** `Authorization: Bearer <token>`\n* **Body:** `form-data` with key `image` (file)\n* **Allowed Formats:** JPEG, JPG, PNG, WEBP\n* **Max Size:** 2 MB\n* **Naming:** Automatically suffixes duplicates with `(1)`, `(2)`, etc."
+            "description": "### 🖼️ Upload Profile Image (Cloudinary)\nUploads or replaces the authenticated user's profile image directly to Cloudinary (`planto/profiles`) using streaming MemoryStorage. No files are stored on disk. If an existing image exists on Cloudinary, it is automatically destroyed.\n\n* **Method:** `POST`\n* **URL:** `{{baseUrl}}/users/auth/profile-image`\n* **Header:** `Authorization: Bearer <token>`\n* **Body:** `form-data` with key `image` (file)\n* **Storage:** Cloudinary Cloud Storage (`memoryStorage`)\n* **Allowed Formats:** JPEG, JPG, PNG, WEBP\n* **Max Size:** 2 MB\n* **Response:** `{ \"message\": \"Profile image set successfully\", \"profileImage\": \"https://res.cloudinary.com/planto/...\" }`"
           },
           "response": []
         },
@@ -622,12 +676,12 @@
                 "profile-image"
               ]
             },
-            "description": "### 🖼️ Get Profile Image\nStreams/downloads the authenticated user's profile image file from disk storage.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users/auth/profile-image`\n* **Header:** `Authorization: Bearer <token>`\n* **Throws:** `404 Not Found` if user has no profile image or file is missing on disk."
+            "description": "### 🖼️ Get Profile Image\nRedirects (HTTP 302) directly to the user's secure Cloudinary profile image URL or Google CDN avatar.\n\n* **Method:** `GET`\n* **URL:** `{{baseUrl}}/users/auth/profile-image`\n* **Header:** `Authorization: Bearer <token>`\n* **Response:** `302 Found` redirecting to Cloudinary / Google CDN URL."
           },
           "response": []
         },
         {
-          "name": "🗑️ Remove Profile Image",
+          "name": "🗑️ Remove Profile Image (Cloudinary)",
           "request": {
             "method": "DELETE",
             "header": [
@@ -647,7 +701,7 @@
                 "profile-image"
               ]
             },
-            "description": "### 🗑️ Remove Profile Image\nDeletes the authenticated user's profile image from disk storage and sets `profileImage` to null in the database.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/users/auth/profile-image`\n* **Header:** `Authorization: Bearer <token>`\n* **Throws:** `400 Bad Request` if user does not have a profile image."
+            "description": "### 🗑️ Remove Profile Image (Cloudinary)\nDeletes the user's profile image asset from Cloudinary and clears the profile image field in the database.\n\n* **Method:** `DELETE`\n* **URL:** `{{baseUrl}}/users/auth/profile-image`\n* **Header:** `Authorization: Bearer <token>`\n* **Response:** `{ \"message\": \"Profile image removed successfully\" }`"
           },
           "response": []
         },
